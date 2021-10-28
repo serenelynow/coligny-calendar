@@ -1,0 +1,42 @@
+<project name="coligny" default="dist" basedir=".">
+  <description>
+    Build the Coligny Calendar web application
+  </description>
+
+  <!-- set global properties for this build -->
+  <property name="src" location="src"/>
+  <property name="build" location="build"/>
+  <property name="dist" location="dist-build"/>
+
+  <target name="init" depends="clean">
+    <!-- Create the time stamp -->
+    <tstamp/>
+    <!-- Create the build directory structure used by compile -->
+    <mkdir dir="${build}"/>
+    <copy todir="${build}">
+      <fileset dir="${src}" excludes="**/cycles/**"/>
+    </copy>
+  </target>
+
+  <target name="uglify" depends="init"
+        description="uglify the javascript and css">
+    <!-- add code to run uglify -->
+  </target>
+
+  <target name="dist" depends="uglify"
+        description="generate the distribution">
+    <!-- Create the distribution directory -->
+    <!-- <mkdir dir="${dist}/lib"/> -->
+
+    <!-- Put everything in ${build} into the coligny-projects-${DSTAMP}.jar file -->
+    <zip destfile="${dist}/coligny-calendar-${DSTAMP}.zip" basedir="${build}"/>
+  </target>
+
+  <target name="clean"
+        description="clean up">
+    <!-- Delete the ${build} and ${dist} directory trees -->
+    <delete dir="${build}"/>
+    <delete dir="${dist}">
+    </delete>
+  </target>
+</project>
