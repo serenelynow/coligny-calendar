@@ -15,6 +15,14 @@ header .coligny-header-right-menu {
 	
 }
 
+.coligny-previousYear {
+	margin-right: 10px;
+}
+
+.coligny-nextYear {
+	margin-left: 10px;
+}
+
 .coligny-row {
 	clear: both;
 }

@@ -1,62 +1,56 @@
 var coligny = (function () {
-    // var module = {}; 
-    // var privateVariable = 4;
-	
-    // function privateMethod() {
-    //     // ..
-    // }
-	
-    // module.moduleProperty = 1;
-    // module.moduleMethod = function () {
-    //     // ...
-    // };
-    // return module;
-
     var coligny = {};
 
 	const milliFactor = 24 * 60 * 60 * 1000;
 	const colignyMonths = [ 
-		"intcal1", "Samonios", "Dumanios", "Riuros", "Anagantios", "Orgronios", "Cutios", "intcal2", "Giamonios", "Simiuisonna", "Equos", "Elembi", "Aedrinni", "Cantlos"
+		"Quimonios", "Samonios", "Dumanios", "Riuros", "Anagantios", "Orgronios", "Cutios", "Rantaranos", "Giamonios", "Simiuisonna", "Equos", "Elembi", "Aedrinni", "Cantlos"
 	]; // 14 months
 
-	const daysOfWeek = [
-		"Sun", "Mon", "Tues", "Wed", "Thurs", "Fri", "Sat"
-	];
+    const daysOfWeek = {
+        short: [null,null,null,null,null,null,null],
+        long: [null,null,null,null,null,null,null]
+    };
 
 	// 20 year cycle
 	const colignyCycle = [
-	  [29,30,29,30,29,30,30,null,29,30,30,29,30,29  ],
-	  [null,30,29,30,29,30,30,null,29,30,28,29,30,29  ],
-	  [null,30,29,30,29,30,30,30,29,30,30,29,30,29  ],
-	  [null,30,29,30,29,30,30,null,29,30,29,29,30,29  ],
-	  [null,30,29,30,29,30,30,null,29,30,30,29,30,29  ],
-	  [29,30,29,30,29,30,30,null,29,30,30,29,30,29  ],
-	  [null,30,29,30,29,30,30,null,29,30,28,29,30,29  ],
-	  [null,30,29,30,29,30,30,30,29,30,30,29,30,29  ],
-	  [null,30,29,30,29,30,30,null,29,30,29,29,30,29  ],
-	  [null,30,29,30,29,30,30,null,29,30,30,29,30,29  ],
-	  [29,30,29,30,29,30,30,null,29,30,30,29,30,29  ],
-	  [null,30,29,30,29,30,30,null,29,30,28,29,30,29  ],
-	  [null,30,29,30,29,30,30,30,29,30,30,29,30,29  ],
-	  [null,30,29,30,29,30,30,null,29,30,29,29,30,29  ],
-	  [null,30,29,30,29,30,30,null,29,30,30,29,30,29  ],
-	  [29,30,29,30,29,30,30,null,29,30,30,29,30,29  ],
-	  [null,30,29,30,29,30,30,null,29,30,28,29,30,29  ],
-	  [null,30,29,30,29,30,30,30,29,30,30,29,30,29  ],
-	  [null,30,29,30,29,30,30,null,29,30,29,29,30,29  ],
-	  [null,30,29,30,29,30,30,null,29,30,30,29,30,29  ]
+        [29,30,29,30,29,30,30,null,29,30,30,29,30,29  ],
+        [null,30,29,30,29,30,30,null,29,30,29,29,30,29  ],
+        [null,30,29,30,29,30,30,30,29,30,29,29,30,29  ],
+        [null,30,29,30,29,30,30,null,29,30,29,29,30,29  ],
+        [null,30,29,30,29,30,30,null,29,30,30,29,30,29  ],
+        [29,30,29,30,29,30,30,null,29,30,30,29,30,29  ],
+        [null,30,29,30,29,30,30,null,29,30,29,29,30,29  ],
+        [null,30,29,30,29,30,30,30,29,30,29,29,30,29  ],
+        [null,30,29,30,29,30,30,null,29,30,29,29,30,29  ],
+        [null,30,29,30,29,30,30,null,29,30,30,29,30,29  ],
+        [29,30,29,30,29,30,30,null,29,30,30,29,30,29  ],
+        [null,30,29,30,29,30,30,null,29,30,29,29,30,29  ],
+        [null,30,29,30,29,30,30,30,29,30,29,29,30,29  ],
+        [null,30,29,30,29,30,30,null,29,30,29,29,30,29  ],
+        [null,30,29,30,29,30,30,null,29,30,30,29,30,29  ],
+        // [29,30,29,30,29,30,30,null,29,30,30,29,30,29  ],
+        [null,30,29,30,29,30,30,null,29,30,29,29,30,29  ],
+        [null,30,29,30,29,30,30,30,29,30,29,29,30,29  ],
+        [null,30,29,30,29,30,30,null,29,30,29,29,30,29  ],
+        [null,30,29,30,29,30,30,null,29,30,30,29,30,29  ]
 	];
 
 	const yearsInCycle = colignyCycle.length;
 	const daysInEachYear = [];
 	const daysInCycle = calculateDaysInCycle(colignyCycle);
-	// var zeroGregorianDate = new Date(2021, 9, 26); // oct 26, 2021
-	// var zeroColignyDate = new ColignyDate(5021, 6, 14, 2); // same as oct 26, 2021
-	var zeroGregorianDate = {};
-	const zeroColignyDate = new ColignyDate (0, 0, 1);
-	var gToday = {};
-	var cToday = {};
-	var currentCalendar;
+    
+    // dates according to Helen's research
+    // const baseGregorianDate = new Date(2015,3,26); // sunday
+    // const baseColignyDate = new ColignyDate (5015, 0, 1, baseGregorianDate.getDay());
+    
+    // dates according to http://www.coligny-app.com
+	const baseGregorianDate = new Date(2003,4,8);
+    const baseColignyDate = new ColignyDate (5003, 0, 1, baseGregorianDate.getDay());
+    
+    var gToday = new Date();
+	var cToday;
+	
+    var currentCalendar;
 
 	function ColignyCalendar (year, month) {
 		var year;
@@ -73,8 +67,6 @@ var coligny = (function () {
 			} else {
 				cString = getMonthName(month) + " " + year;
 			}
-
-			// cString += " (year in cycle: " + yearInCycle + ")";
 
 			return cString;
 		};
@@ -130,23 +122,21 @@ var coligny = (function () {
 
 		this.calculateStartDay = function () {
 			// get days from zero for today
-			var daysSinceZero = calculateDaysSinceZero(year, month, 1);
+			var daysSinceZero = calculateDaysSinceColBase(year, month, 1);
 
 			gStartDate = new Date(
-				zeroGregorianDate.getFullYear(),
-				zeroGregorianDate.getMonth(),
-				zeroGregorianDate.getDate());
+				baseGregorianDate.getFullYear(),
+				baseGregorianDate.getMonth(),
+				baseGregorianDate.getDate());
 			gStartDate.setDate(gStartDate.getDate() + daysSinceZero);
 
-
-
 			equalizeTime(gStartDate);
-
 
 			startDay = gStartDate.getDay();
 		};
 
 		this.getDaysInMonth = function () {
+            // thisis the original code when hack can be removed
 			var days = (colignyCycle[yearInCycle][month] || 0);
 			return days;
 		}
@@ -199,32 +189,32 @@ var coligny = (function () {
 			return day;
 		}
 
-		this.calculateDate = function (daysFromZero) {
-			// calcate date from days from zero.
-			daysFromZero = Math.floor(daysFromZero);
+		this.calculateDate = function (daysFromBase) {
+			// calcate date from days from base.
+			daysFromBase = Math.floor(daysFromBase);
 			
 
 			//calulate milliseconds to get Gregorian date and its day of week
-			var time = zeroGregorianDate.getTime() + daysFromZero;
+			var time = baseGregorianDate.getTime() + (daysFromBase*milliFactor);
 			gDate = new Date(time);
 
 			var dayOfWeek = gDate.getDay();
 			this.setDay(dayOfWeek);
 
-			var cycles = Math.floor(daysFromZero/daysInCycle);
+			var cycles = Math.floor(daysFromBase/daysInCycle);
 
 			var daysSoFar = cycles*daysInCycle;
 
 			// cycles * years in a cycle
-			var year = cycles * colignyCycle.length;
+			var year = baseColignyDate.getYear() + (cycles * colignyCycle.length);
 
 			// get remainder of mod to know how many days we are into current cycle
-			var daysInCurrentCurrentCycle = daysFromZero % daysInCycle;
+			var daysInCurrentCurrentCycle = daysFromBase % daysInCycle;
 			var y, m, d;
 
 			for (y = 0; y < daysInEachYear.length; y++) {
 
-				if ((daysSoFar + daysInEachYear[y]) < daysFromZero) {
+				if ((daysSoFar + daysInEachYear[y]) < daysFromBase) {
 					// if this year will complelete, add all its days and a year
 					year += 1;
 					daysSoFar += daysInEachYear[y];
@@ -241,7 +231,7 @@ var coligny = (function () {
 
 			var month = 0;
 			for (m = 0; m < colignyCycle[y].length; m++) {
-				if ((daysSoFar + colignyCycle[y][m]) < daysFromZero) {
+				if ((daysSoFar + colignyCycle[y][m]) < daysFromBase) {
 					// if this year will complelete, add it's days and year
 					month += 1;
 					daysSoFar += colignyCycle[y][m];
@@ -254,7 +244,8 @@ var coligny = (function () {
 			}
 			this.setMonth(month);
 
-			var date = daysFromZero - daysSoFar;
+			var date = baseColignyDate.getDate() + (daysFromBase - daysSoFar);
+
 			// add a day for the current Day
 			// this could be a bug if it's perfectly the beginning of they day
 			this.setDate(date);
@@ -388,6 +379,66 @@ var coligny = (function () {
 		displayCalendar(nextMonth);		
 	};
 
+    function getNextYear(cCalendar) {
+        // go forward one year
+        var year = cCalendar.getYear() + 1; 
+        var m = cCalendar.getMonth();
+        var yearInCycle = getYearInCycle(year);
+        // if we currently in an intercalary month
+        // then we will go to the month afterwards
+        while (colignyCycle[yearInCycle][m] == undefined) {
+            if (m == colignyCycle[yearInCycle].length){
+                //we've reached the end of the year so go to the next year
+                if (yearInCycle == colignyCycle.length - 1) {
+                    // we've reached the end of the cycle so, start new cycle
+                    yearInCycle = 0;
+                }
+                year++;
+                m = 0;
+            } else {
+                m++; 
+            }
+        }
+
+        var yearNext = new ColignyCalendar(year, m);
+        return yearNext;
+    }
+
+    function goFowardOneYear (cCalendar) {
+        var yearNext = getNextYear(currentCalendar);
+        displayCalendar(yearNext);
+    }
+
+    function getPreviousYear (cCalendar) {
+        // go back one year
+        var year = cCalendar.getYear() - 1; 
+        var m = cCalendar.getMonth();
+        var yearInCycle = getYearInCycle(year);
+        // if we currently in an intercalary month
+        // then we will go to the month afterwards
+        while (colignyCycle[yearInCycle][m] == undefined) {
+            if (m == colignyCycle[yearInCycle].length){
+                //we've reached the end of the year so go to the next year
+                if (yearInCycle == colignyCycle.length - 1) {
+                    // we've reached the end of the cycle so, start new cycle
+                    yearInCycle = 0;
+                }
+                year++;
+                m = 0;
+            } else {
+                m++; 
+            }
+        }
+
+        var yearPrevious = new ColignyCalendar(year, m);
+        return yearPrevious;
+    }
+
+    function goBackOneYear () {
+        var yearPrevious = getPreviousYear(currentCalendar);
+        displayCalendar(yearPrevious);
+    }
+
 	function getGridRow () {
 		var row = document.createElement('div');
 		row.className = "coligny-cal-row coligny-row";
@@ -411,7 +462,7 @@ var coligny = (function () {
 		var cell = getCalendarCell();
 
 		cell.children[0].innerText = cDate;
-		cell.children[1].innerText = gDate.toLocaleDateString();
+		cell.children[1].innerText = gDate.toLocaleDateString([], {era:'short'});
 		cell.children[2].innerHTML = "&nbsp;";
 		
 		return cell;
@@ -435,6 +486,55 @@ var coligny = (function () {
 		};
 	};
 
+    function generateCalendarHeader(cCalendar) {
+        // set the Month Year label
+        var monthLabel = document.createElement('div');
+        monthLabel.className = "coligny-month-label coligny-row";
+        
+        // add the back one year button
+        var previousYear = document.createElement('a');
+        previousYear.className = "coligny-previousYear";
+        previousYear.innerText = "<<";
+        previousYear.onclick = goBackOneYear;
+        previousYear.href = "#";
+        monthLabel.appendChild(previousYear);
+
+        // add the back button
+        var back = document.createElement('a');
+        back.innerText = "<";
+        back.onclick = goBack;
+        back.href = "#";
+        monthLabel.appendChild(back);
+
+        // add the month and year label
+        var labelText = cCalendar.getMonthName() + " " + cCalendar.getYear() + " BG";
+        var label = document.createElement('div');
+        label.innerText = labelText;
+        label.className = "coligny-cal-label"
+        monthLabel.appendChild(label);
+
+        // add the forward button
+        var forward = document.createElement('a');
+        forward.innerText = ">";
+        forward.onclick = goForward;
+        forward.href = "#";
+        monthLabel.appendChild(forward);
+
+
+        // add the forward one year button
+        var previousYear = document.createElement('a');
+        previousYear.className = "coligny-nextYear";
+        previousYear.innerText = ">>";
+        previousYear.onclick = goFowardOneYear;
+        previousYear.href = "#";
+        monthLabel.appendChild(previousYear);
+
+        
+
+        return monthLabel;
+
+    }
+
 	function displayCalendar (cCalendar) {
 
 		var oldCalendar = document.getElementsByClassName("coligny-calendar");
@@ -445,31 +545,8 @@ var coligny = (function () {
 
 		var calendarContainer = document.createElement('div');
 		calendarContainer.className = "coligny-calendar";
-		
-		// set the Month Year label
-		var monthLabel = document.createElement('div');
-		monthLabel.className = "coligny-month-label coligny-row";
-		
-		// add the back button
-		var back = document.createElement('a');
-		back.innerText = "<";
-		back.onclick = goBack;
-		back.href = "#";
-		monthLabel.appendChild(back);
 
-		// add the month and year label
-		var labelText = cCalendar.getMonthName() + " " + cCalendar.getYear() + " BG";
-		var label = document.createElement('div');
-		label.innerText = labelText;
-		label.className = "coligny-cal-label"
-		monthLabel.appendChild(label);
-
-		// add the forward button
-		var forward = document.createElement('a');
-		forward.innerText = ">";
-		forward.onclick = goForward;
-		forward.href = "#";
-		monthLabel.appendChild(forward);
+        var monthLabel = generateCalendarHeader(cCalendar);
 
 		calendarContainer.appendChild(monthLabel);
 
@@ -484,7 +561,7 @@ var coligny = (function () {
 
 		for (var d = 0; d < 7; d++) {
 			var cell = getCalendarCell();
-			cell.innerText = daysOfWeek[d];
+			cell.innerText = daysOfWeek.short[d];
 			daysNamesHeader.appendChild(cell);
 		};
 		calendarGrid.appendChild(daysNamesHeader);
@@ -494,7 +571,6 @@ var coligny = (function () {
 		var gridRow;
 		var startDay = cCalendar.getStartDay();
 		var gStartDate = cCalendar.getGStartDate();
-		// var originalDate = gStartDate.getDate();
 
 		// do the first week if it doesn't start on a Sunday
 		if (startDay > 0) {
@@ -580,43 +656,119 @@ var coligny = (function () {
 	}
 
 	function getYearInCycle (year) {
-		yearInCycle = year % (colignyCycle.length);
+        // we want to get the index of the year
+        // so the first year has an index of 0
+		// var remainder = year % (colignyCycle.length);
+        var yearInCycle = (year - baseColignyDate.getYear()) % colignyCycle.length;
 
+        if (yearInCycle < 0) {
+            yearInCycle = colignyCycle.length + yearInCycle;
+        }
+        
 		return yearInCycle;
 	};
 
-	function calculateDaysSinceZero (year, month, day) {
+    function getCyclesCompleted(year) {
+        var nCycles = Math.floor(year/yearsInCycle);
+        return nCycles;
+    };
 
-		// calculate days for total cycles completed since Zero
-		// get days in completed cycles
-		// if year is same year as years in cycle, 
-		// this indicates it is the first year of the next cycle
-		// so we need to add one to the year to get this result
-		var nCycles = Math.floor((year+1)/yearsInCycle);
-		var totalDays = nCycles*daysInCycle;
+    function calculateDaysOfWeek() {
+        // format should be a string of either "short" or "long"
+        var forDays = new Date(gToday.getFullYear(), gToday.getMonth(), gToday.getDate());
 
-		// calculate days in current incomplete cycle except current year
-		// year is more like an index and not a count
-		var remainderYears = year % yearsInCycle;
-		var y;
-		for (y = 0; y < remainderYears; y++) {
-			totalDays += daysInEachYear[y];
-		}
+        // set date to a Sunday date for each looping
+        forDays.setDate(forDays.getDate() - forDays.getDay());
+        
 
-		// calculate days in months of current year upto but excluding current month
-		// for (var m = 0; m < month - 1; m++) {
-		for (var m = 0; m < month; m++) {
-			var monthDays = colignyCycle[y][m];
-			totalDays += (monthDays || 0);
-		}
+        for (var i = 0; i < 7; i++) {
+            daysOfWeek.short[i] = new Intl.DateTimeFormat('en-US', {weekday: "short"}).format(forDays);
+            daysOfWeek.long[i] = new Intl.DateTimeFormat('en-US', {weekday: "long"}).format(forDays);
 
-		// add days for this month one less since you are calculating difference from another date
-		// if I was calculating the 2nd day from the beginning, then while the date is 2, 
-		// it's only one day from the beginning
-		totalDays += (day - 1);
+            // advance to next day
+            forDays.setDate(forDays.getDate() + 1);
+        }
+    };
 
-		return totalDays;
-	};
+    function calculateDaysSinceColBase (year, month, day) {
+
+        // get the difference in years to start
+        var yDiff = year - baseColignyDate.getYear(); 
+        var beforeOrAfterFactor;
+        if (yDiff == 0) {
+            // we are in the same year of the baseColignyDate
+            // so we need to determine before or after
+            if (month > baseColignyDate.getMonth()) {
+                beforeOrAfterFactor = 1;
+            } else if (month < baseColignyDate.getMonth()) {
+                beforeOrAfterFactor = -1;
+            } else if (day > baseColignyDate.getDate()) {
+                beforeOrAfterFactor = 1
+            } else if (day < baseColignyDate.getDate()) {
+                beforeOrAfterFactor = -1
+            } else {
+                beforeOrAfterFactor = 0
+            }
+        } else {
+            beforeOrAfterFactor = yDiff / Math.abs(yDiff);
+            beforeOrAfterFactor = parseInt(beforeOrAfterFactor);
+        }
+        
+        if (beforeOrAfterFactor == 0) {
+            // we are on the baseColignyDate so no need to process any further
+            var daysSinceColBase = 0;
+        } else {
+            // calculate days for total cycles completed since Zero
+            // get days in completed cycles
+            // if year is same year as years in cycle, 
+            // this indicates it is the first year of the next cycle
+            // so we need to add one to the year to get this result
+            var cycles = getCyclesCompleted(yDiff);
+            daysSinceColBase = cycles*daysInCycle;
+
+            // calculate days in current incomplete cycle except current year
+            // year is more like an index and not a count
+            // we need to use the absolute value for dates that occur before the colBaseDate
+            yDiff = Math.abs(yDiff) % yearsInCycle;
+
+            // we can now calculate days from years from start of incomplete cycle
+            if (beforeOrAfterFactor == 1) {
+                // count forward
+                for (var y = 0; y < yDiff; y++) { // just go to less than yDiff since last year is incompplete
+                    daysSinceColBase += daysInEachYear[y];
+                }
+
+                // calculate days in months of current year up to but excluding current month
+                for (var m = 0; m < month; m++) {
+                    var monthDays = colignyCycle[yDiff][m];
+                    daysSinceColBase += (monthDays || 0);
+                }
+                // add days for this month one less since you are calculating difference from another date
+                // if I was calculating the 2nd day from the beginning, then while the date is 2, 
+                // it's only one day from the beginning
+                daysSinceColBase += (day - baseColignyDate.getDate());
+
+            } else {
+                //count backwayds
+                for (var y = colignyCycle.length -1; y > yDiff; y--) { // just go to less than yDiff since last year is incompplete
+                    daysSinceColBase += daysInEachYear[y];
+                }
+
+                var currentYearInCycle = colignyCycle.length - yDiff;
+                for (var m = colignyCycle[currentYearInCycle].length; m > month; m--) { // just go to less than yDiff since last year is incompplete
+                    
+                    var monthDays = colignyCycle[currentYearInCycle][m];
+                    daysSinceColBase += (monthDays || 0);
+                }
+
+                // since we are counting backwards 
+                // calculate days since the end of the month provided
+                daysSinceColBase += colignyCycle[currentYearInCycle][month] - day;
+            }
+        }
+
+        return daysSinceColBase;
+    };
 
 	function calculateDaysInCycle(cycleArray) {
 		var totalDays = 0;
@@ -638,35 +790,13 @@ var coligny = (function () {
 			gToday = new Date();
 		}
 
-		equalizeTime(zeroGregorianDate);
+		equalizeTime(baseGregorianDate);
 
-		var diffGDatesMs = gToday.getTime() - zeroGregorianDate.getTime();
+		var diffGDatesMs = gToday.getTime() - baseGregorianDate.getTime();
 
 		var diffGDatesDays = diffGDatesMs / milliFactor;
 
 		cToday = new ColignyDate(diffGDatesDays);
-	};
-
-	function calculateZeroColignyDate () {
-
-		// according to coligny-app.com zero coligny (Samonios 1, 0 BG) is Monday May 26, -3001
-		// I'm getting Fri Mar 2, -3013 but spot checking on current dates and all looks good
-
-		var baseGDate = new Date(2021, 9, 26); // oct 26, 2021 tues
-		var baseCDate = new ColignyDate(5021, 6, 14, 2); // same as oct 26, 2021 tues
-		var toZeroDays = calculateDaysSinceZero(baseCDate.getYear(), baseCDate.getMonth(), baseCDate.getDate());
-
-		equalizeTime(baseGDate);
-
-
-		zeroGregorianDate = new Date (
-			baseGDate.getFullYear(), baseGDate.getMonth(), baseGDate.getDate() - toZeroDays);
-		
-		equalizeTime(zeroGregorianDate);
-
-		// zeroColignyDate is set when the variable is initialized
-		// we just need to know what day of the week it is
-		zeroColignyDate.setDay(zeroGregorianDate.getDay());
 	};
 
 	function generateModal () {
@@ -686,7 +816,7 @@ var coligny = (function () {
 	}
 
 	coligny.onLoad = function () {
-		calculateZeroColignyDate();
+        calculateDaysOfWeek();
 		calculateCurrentColignyDate();
 		var calendar = new ColignyCalendar(
 			cToday.getYear(),
@@ -700,7 +830,7 @@ var coligny = (function () {
 		var modal = generateModal();
 
 		var dayOfWeek = document.createElement("div");
-		dayOfWeek.innerText = daysOfWeek[gToday.getDay()]
+		dayOfWeek.innerText = daysOfWeek.long[gToday.getDay()]
 		modal.appendChild(dayOfWeek);
 
 		var cDate = document.createElement("div");
@@ -712,7 +842,6 @@ var coligny = (function () {
 		modal.appendChild(time);
 
 		var gotoButton = document.createElement("button");
-		// gotoButton.type = "submit";
 		gotoButton.innerText = "Go To Today";
 		gotoButton.onclick = function () {
 			var calendar = new ColignyCalendar(
@@ -726,15 +855,8 @@ var coligny = (function () {
 		modal.appendChild(gotoButton);
 
 		var closeButton = document.createElement("button");
-		// closeButton.type = "submit";
 		closeButton.innerText = "Close";
 		closeButton.onclick = function () {
-			var calendar = new ColignyCalendar(
-				cToday.getYear(),
-				cToday.getMonth()
-			);
-			displayCalendar(calendar);
-
 			document.getElementsByClassName("coligny-modal")[0].remove();
 		}
 		modal.appendChild(closeButton);	
@@ -765,9 +887,11 @@ var coligny = (function () {
 			document.getElementsByClassName("coligny-modal")[0].remove();
 		}
 
+        var inputContainer = document.createElement("div");
+
 		var labelMonth = document.createElement("label");
 		labelMonth.innerText = "Month";
-		form.appendChild(labelMonth);
+		inputContainer.appendChild(labelMonth);
 
 		var inputMonth = document.createElement("input");
 		inputMonth.type = "number";
@@ -775,22 +899,35 @@ var coligny = (function () {
 		inputMonth.min = 0;
 		inputMonth.max = colignyMonths.length - 1;
 		inputMonth.value = currentCalendar.getMonth();
-		form.appendChild(inputMonth);
+		inputContainer.appendChild(inputMonth);
 
 		var labelYear = document.createElement("label");
 		labelYear.innerText = "Year";
-		form.appendChild(labelYear);
+		inputContainer.appendChild(labelYear);
 
 		var inputYear = document.createElement("input");
 		inputYear.type = "number";
 		inputYear.name = yearInputName;
 		inputYear.value = currentCalendar.getYear();
-		form.appendChild(inputYear);
+		inputContainer.appendChild(inputYear);
+
+        form.appendChild(inputContainer);
+
+        var buttonRow = document.createElement("div");
 
 		var gotoButton = document.createElement("button");
 		gotoButton.type = "submit";
 		gotoButton.innerText = "Go To";
-		form.appendChild(gotoButton);
+		buttonRow.appendChild(gotoButton);
+
+        var closeButton = document.createElement("button");
+        closeButton.innerText = "Close";
+        closeButton.onclick = function () {
+             document.getElementsByClassName("coligny-modal")[0].remove();
+        }
+        buttonRow.appendChild(closeButton);
+
+        form.appendChild(buttonRow);
 
 		modal.appendChild(form);
 
