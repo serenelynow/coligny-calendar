@@ -11,7 +11,7 @@ var coligny = (function () {
         long: [null,null,null,null,null,null,null]
     };
 
-	// 20 year cycle
+	// 19 year cycle
 	const colignyCycle = [
         [29,30,29,30,29,30,30,null,29,30,30,29,30,29  ],
         [null,30,29,30,29,30,30,null,29,30,29,29,30,29  ],
@@ -34,6 +34,8 @@ var coligny = (function () {
         [null,30,29,30,29,30,30,null,29,30,29,29,30,29  ],
         [null,30,29,30,29,30,30,null,29,30,30,29,30,29  ]
 	];
+
+	// need to take out one day in Equos every 219
 
 	const yearsInCycle = colignyCycle.length;
 	const daysInEachYear = [];
@@ -136,7 +138,6 @@ var coligny = (function () {
 		};
 
 		this.getDaysInMonth = function () {
-            // thisis the original code when hack can be removed
 			var days = (colignyCycle[yearInCycle][month] || 0);
 			return days;
 		}
@@ -423,6 +424,7 @@ var coligny = (function () {
                     // we've reached the end of the cycle so, start new cycle
                     yearInCycle = 0;
                 }
+                yearInCycle++;
                 year++;
                 m = 0;
             } else {
@@ -669,7 +671,7 @@ var coligny = (function () {
 	};
 
     function getCyclesCompleted(year) {
-        var nCycles = Math.floor(year/yearsInCycle);
+        var nCycles = Math.floor(Math.abs(year)/yearsInCycle);
         return nCycles;
     };
 
@@ -750,12 +752,18 @@ var coligny = (function () {
 
             } else {
                 //count backwayds
-                for (var y = colignyCycle.length -1; y > yDiff; y--) { // just go to less than yDiff since last year is incompplete
+                for (var y = (colignyCycle.length - 1); y > (colignyCycle.length - yDiff); y--) { // just go to less than yDiff since last year is incompplete
                     daysSinceColBase += daysInEachYear[y];
                 }
 
-                var currentYearInCycle = colignyCycle.length - yDiff;
-                for (var m = colignyCycle[currentYearInCycle].length; m > month; m--) { // just go to less than yDiff since last year is incompplete
+                var currentYearInCycle;
+                if (yDiff == 0) {
+                	currentYearInCycle = 0;
+                } else {
+                	currentYearInCycle = colignyCycle.length - yDiff;
+                }
+
+                for (var m = colignyCycle[currentYearInCycle].length - 1; m > month; m--) { // don't add the current month
                     
                     var monthDays = colignyCycle[currentYearInCycle][m];
                     daysSinceColBase += (monthDays || 0);
@@ -763,7 +771,8 @@ var coligny = (function () {
 
                 // since we are counting backwards 
                 // calculate days since the end of the month provided
-                daysSinceColBase += colignyCycle[currentYearInCycle][month] - day;
+                daysSinceColBase += colignyCycle[currentYearInCycle][month] - day + 1;
+                daysSinceColBase *= -1;
             }
         }
 
