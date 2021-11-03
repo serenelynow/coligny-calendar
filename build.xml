@@ -12,21 +12,19 @@
     <!-- Create the time stamp -->
     <tstamp/>
     <!-- Create the build directory structure used by compile -->
-    <mkdir dir="${build}"/>
-    <copy todir="${build}">
-      <fileset dir="${src}" excludes="**/cycles/**"/>
-    </copy>
+    <mkdir dir="${build}"/> 
   </target>
 
-  <target name="uglify" depends="init"
-        description="uglify the javascript and css">
-    <!-- add code to run uglify -->
-  </target>
+  <target name="build" depends="init">
+    <exec executable="npm">
+      <arg value="run"/>
+      <arg value="build"/>
+    </exec>
+</target>
 
-  <target name="dist" depends="uglify"
-        description="generate the distribution">
+  <target name="dist" depends="build" description="generate the distribution">
     <!-- Create the distribution directory -->
-    <!-- <mkdir dir="${dist}/lib"/> -->
+    <mkdir dir="${dist}"/>
 
     <!-- Put everything in ${build} into the coligny-projects-${DSTAMP}.jar file -->
     <zip destfile="${dist}/coligny-calendar-${DSTAMP}.zip" basedir="${build}"/>
