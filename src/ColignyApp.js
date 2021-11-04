@@ -15,7 +15,6 @@ export const CalendarContext = React.createContext([{}, () => {}]);
 export default function ColignyApp() {
 
 	const prefersDarkMode = useMediaQuery('(prefers-color-scheme: dark)');
-	// const prefersDarkMode = false;
 
   const theme = React.useMemo(
     () =>

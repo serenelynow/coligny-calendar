@@ -20,7 +20,7 @@ export function getCurrentCalendar() {
   return currentCalendar;
 };
 
-export default function ColignyCalendarTable(props) {
+export default function ColignyCalendarTable() {
 
   const [calContext, setCalContext] = React.useContext(CalendarContext);
 
@@ -47,7 +47,7 @@ export default function ColignyCalendarTable(props) {
   return (
     <Box className="coligny-calendar-table">
       <ColignyCalendarHeader
-        calendar={calendar}/>
+        label={calendar.toString()}/>
       <TableContainer component={Paper}>
         <Table>
           <TableHead>

@@ -14,10 +14,9 @@ import TodayDialog from './TodayDialog.js';
 import GoToDialog from './GoToDialog.js';
 import {gToday} from './DateHelper.js';
 
-export default function ColignyAppHeader(props) {
+export default function ColignyAppHeader() {
   const [todayOpen, setTodayOpen] = React.useState(false);
   const [goToOpen, setGoToOpen] = React.useState(false);
-  const [appState, setAppState] = React.useState(false);
 
   const handleTodayOpen = () => {
     setTodayOpen(true);
