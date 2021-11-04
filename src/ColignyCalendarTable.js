@@ -11,36 +11,18 @@ import Box from '@mui/material/Box';
 import Typography from '@mui/material/Typography';
 
 
-import {Today, DaysOfWeek} from './DateHelper.js';
+import {gToday, DaysOfWeek} from './DateHelper.js';
 import ColignyCalendarHeader from './ColignyCalendarHeader.js';
+import ColignyCalendar from './ColignyCalendar.js';
+import {CalendarContext} from './ColignyApp.js';
 
-function createData(day, dateStr) {
-  return { day, dateStr };
-}
-
-function getRows () {
-  var start = new Date();
-  start.setDate(1);
-  var d = start.getDay();
-
-  var rows = [];
-  for (var r = 0; r < 6; r++) {
-    rows[r] = [];
-    for (var c = 0; c < 7; c++) {
-      var date = (r*7)+c+1;
-      start.setDate(date);
-      rows[r][c] = createData(date, start.toLocaleDateString([], {year: 'numeric', month:'short', day:'2-digit', era:'short'}));
-    }
-  }
-
-  return rows;
-}
-
-const rows = getRows();
+export function getCurrentCalendar() {
+  return currentCalendar;
+};
 
 export default function ColignyCalendarTable(props) {
 
-  const { date } = props;
+  const [calContext, setCalContext] = React.useContext(CalendarContext);
 
   const cellStyles = { 
     '&:last-child, &:last-child': { borderRight: 0 }, 
@@ -48,24 +30,27 @@ export default function ColignyCalendarTable(props) {
     borderColor: 'grey.700', 
     width: '13%',
     // wordBreak: 'break-word',
-    padding: {xs: .5, sm: 1}
+    padding: {xs: .5, sm: 1},
+    '.coligny-today-cell': { backgroundColor:  'info.main'}
   };
 
   const dateCellStyles = Object.assign({}, cellStyles);
   dateCellStyles.verticalAlign = 'top;'
 
   const rowStyles = { '&:last-child td, &:last-child th': { borderBottom: 0 } };
-  const typoStyles = {fontSize: {xs: ".6rem", sm: ".9rem", md: 1}};
+  const typoStyles = {fontSize: {xs: ".6rem", sm: ".9rem"}};
   const dateTypoStyles = {fontWeight: 'bold'};
 
+
+  var calendar = new ColignyCalendar(calContext.year, calContext.month);
+  
   return (
     <Box className="coligny-calendar-table">
       <ColignyCalendarHeader
-        date={Today}/>
+        calendar={calendar}/>
       <TableContainer component={Paper}>
         <Table>
           <TableHead>
-            {/*<TableRow sx={{backgroundColor: 'grey.600'}}>*/}
             <TableRow>
               {DaysOfWeek.short.map((name) => (
                 <TableCell align="center" key={name}
@@ -76,13 +61,14 @@ export default function ColignyCalendarTable(props) {
             </TableRow>
           </TableHead>
           <TableBody>
-            {rows.map((row, rIndex) => (
+            {calendar.getRows().map((row, rIndex) => (
               <TableRow
                 sx={rowStyles}
                 key={"row"+rIndex}>
-                {rows[rIndex].map((cell, cIndex) => (
+                {row.map((cell, cIndex) => (
                   <TableCell align="left" key={"cell"+cIndex}
-                    sx={dateCellStyles}>
+                    sx={dateCellStyles}
+                    className={cell.isToday ? "coligny-today-cell" : ""}>
                     <Typography sx={dateTypoStyles} variant='body2'>{cell.day}</Typography>
                     <Typography sx={typoStyles} variant='body2'>{cell.dateStr}</Typography>
                   </TableCell>
@@ -94,8 +80,4 @@ export default function ColignyCalendarTable(props) {
       </TableContainer>
     </Box>
   );
-}
-
-ColignyCalendarTable.propTypes = {
-  date: PropTypes.any.isRequired
 };

@@ -1,5 +1,6 @@
 // this is the default that should work
 import * as React from 'react';
+import PropTypes from 'prop-types';
 import AppBar from '@mui/material/AppBar';
 import Box from '@mui/material/Box';
 import Toolbar from '@mui/material/Toolbar';
@@ -11,17 +12,15 @@ import MoreVertIcon from '@mui/icons-material/MoreVert';
 
 import TodayDialog from './TodayDialog.js';
 import GoToDialog from './GoToDialog.js';
-import {Today} from './DateHelper.js';
+import {gToday} from './DateHelper.js';
 
-export default function ColignyAppHeader() {
-
-  const [todayOpen, todaySetOpen] = React.useState(false);
-  const [goToOpen, goToSetOpen] = React.useState(false);
+export default function ColignyAppHeader(props) {
+  const [todayOpen, setTodayOpen] = React.useState(false);
+  const [goToOpen, setGoToOpen] = React.useState(false);
+  const [appState, setAppState] = React.useState(false);
 
   const handleTodayOpen = () => {
-    var now = new Date().getTime();
-    Today.setTime(now);
-    todaySetOpen(true);
+    setTodayOpen(true);
   };
 
   const handleTodayGoToClick = (value) => {
@@ -29,13 +28,11 @@ export default function ColignyAppHeader() {
   };
 
   const handleTodayClose = () => {
-    todaySetOpen(false);
+    setTodayOpen(false);
   };
 
   const handleGoToOpen = () => {
-    var now = new Date().getTime();
-    Today.setTime(now);
-    goToSetOpen(true);
+    setGoToOpen(true);
   };
 
   const handleGoToClick = (value) => {
@@ -43,10 +40,10 @@ export default function ColignyAppHeader() {
   };
 
   const handleGoToClose = () => {
-    goToSetOpen(false);
+    setGoToOpen(false);
   };
 
-  const iconDisplaySettings = { display: { md: 'inherit', lg: 'none', xl: 'none'  } };
+  const iconDisplaySettings = { display: { md: 'inherit', lg: 'none', xl: 'none'  }, mr: 2 };
   const textDisplaySettings = { paddingRight: 2, display: { xs: 'none', sm: 'none', md:'none', lg:'inherit' } };
   const toolbarSettings = { paddingRight: { xs: 0, sm: 0, md: 0, lg:'inherit' } };
 
@@ -59,7 +56,6 @@ export default function ColignyAppHeader() {
             edge="start"
             color="inherit"
             aria-label="menu"
-            sx={{ mr: 2 }}
             onClick={handleTodayOpen}
             sx={iconDisplaySettings}
           >
@@ -76,8 +72,7 @@ export default function ColignyAppHeader() {
             size="large"
             edge="start"
             color="inherit"
-            aria-label="menu"
-            sx={{ mr: 2 }}
+            aria-label="more"
             onClick={handleGoToOpen}
             sx={iconDisplaySettings}
           >
@@ -96,7 +91,6 @@ export default function ColignyAppHeader() {
         open={goToOpen}
         onGoTo={handleGoToClick}
         onClose={handleGoToClose}
-        date={Today}
       />
     </Box>
   );

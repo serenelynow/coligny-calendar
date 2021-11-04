@@ -6,34 +6,43 @@ import Dialog from '@mui/material/Dialog';
 import DialogActions from '@mui/material/DialogActions';
 import DialogContent from '@mui/material/DialogContent';
 import DialogContentText from '@mui/material/DialogContentText';
-import Typography from '@mui/material/Typography';
 
-import {Today, DaysOfWeek} from './DateHelper.js';
+import {cToday, DaysOfWeek} from './DateHelper.js';
+import {CalendarContext} from './ColignyApp.js';
 
 export default function TodayDialog(props) {
   const { onGoTo, onClose, open } = props;
 
   const onCloseClick = () => {
-    onClose(Today);
+    onClose(cToday);
   };
 
+  const [calContext, setCalContext] = React.useContext(CalendarContext);
+
   const onGoToClick = () => {
-    alert("Going to today: " + Today.toLocaleString());
-    onGoTo(Today);
+    setCalContext(
+      calContext => (
+        { ...calContext, year: cToday.getYear(), month: cToday.getMonth() }
+      )
+    );
+
+    onGoTo();
   };
+
+  var now = new Date();
 
   return (
     <Dialog onClose={onCloseClick} open={open}>
       <DialogTitle>Today is</DialogTitle>
       <DialogContent>
         <DialogContentText variant="body1">
-          {DaysOfWeek.long[Today.getDay()]}
+          {DaysOfWeek.long[cToday.getDay()]}
         </DialogContentText>
         <DialogContentText variant="h5">
-          {Today.toLocaleDateString()}
+          {cToday.toString()}
         </DialogContentText>
         <DialogContentText variant="body1">
-          {Today.toLocaleTimeString([], {hour: '2-digit', minute:'2-digit'})}
+          {now.toLocaleTimeString([], {hour: '2-digit', minute:'2-digit'})}
         </DialogContentText>
       </DialogContent>
       <DialogActions>

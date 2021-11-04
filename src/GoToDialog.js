@@ -8,18 +8,38 @@ import Dialog from '@mui/material/Dialog';
 import DialogActions from '@mui/material/DialogActions';
 import DialogContent from '@mui/material/DialogContent';
 
-import {Today} from './DateHelper.js';
+import {CalendarContext} from './ColignyApp.js';
+import {cToday} from './DateHelper.js';
 
 export default function GoToDialog(props) {
-  const { onGoTo, onClose, open, date } = props;
+  const { onGoTo, onClose, open } = props;
+
+
+  const [calContext, setCalContext] = React.useContext(CalendarContext);
+
+  var year = calContext.year;
+  var month = calContext.month;
 
   const onCloseClick = () => {
-    onClose(Today);
+    onClose();
   };
 
   const onGoToClick = () => {
-    alert("Going to: " + Today.toLocaleString());
-    onGoTo(Today);
+    setCalContext(
+      calContext => (
+        { ...calContext, year: year, month: month }
+      )
+    );
+
+    onGoTo(calContext);
+  };
+
+  const handleYearChange = (event) => {
+    year = event.target.value;
+  };
+
+  const handleMonthChange = (event) => {
+    month = event.target.value;
   };
 
   return (
@@ -42,8 +62,11 @@ export default function GoToDialog(props) {
               InputLabelProps={{
                 shrink: true
               }}
-              defaultValue={date.getMonth()}
-            />
+              defaultValue={month}
+              onChange={handleMonthChange}
+              onFocus={event => {
+                event.target.select()}}
+              />
             <TextField
               required
               id="outlined-number"
@@ -52,15 +75,19 @@ export default function GoToDialog(props) {
               InputLabelProps={{
                 shrink: true
               }}
-              defaultValue={date.getFullYear()}
-            />
+              defaultValue={year}
+              onChange={handleYearChange}
+              onFocus={event => {
+                event.target.select()}}
+              />
           </Box>
-       </DialogContent>
+      </DialogContent>
       <DialogActions>
         <Button variant="outlined" onClick={onCloseClick}>
           Close
         </Button>
-        <Button variant="outlined" onClick={onGoToClick}>
+        <Button variant="outlined" type='submit'
+          onClick={onGoToClick}>
           Go To
         </Button>
       </DialogActions>
@@ -70,7 +97,6 @@ export default function GoToDialog(props) {
 
 GoToDialog.propTypes = {
   onGoTo: PropTypes.func.isRequired,
-  date: PropTypes.any.isRequired,
   open: PropTypes.bool.isRequired,
   onClose: PropTypes.func.isRequired
 };

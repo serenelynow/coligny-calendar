@@ -1,5 +1,4 @@
 import * as React from 'react';
-import ReactDOM from 'react-dom';
 import Box from '@mui/material/Box';
 import useMediaQuery from '@mui/material/useMediaQuery';
 import { useTheme, ThemeProvider, createTheme } from '@mui/material/styles';
@@ -9,7 +8,9 @@ import { grey } from '@mui/material/colors';
 // Coligny App specific modules
 import ColignyAppHeader from './ColignyAppHeader.js';
 import ColignyCalendarTable from './ColignyCalendarTable.js';
-import {Today} from './DateHelper.js';
+import {gToday, cToday} from './DateHelper.js';
+
+export const CalendarContext = React.createContext([{}, () => {}]);
 
 export default function ColignyApp() {
 
@@ -33,13 +34,20 @@ export default function ColignyApp() {
     [prefersDarkMode],
   );
 
+	const [calContext, setCalContext] = React.useState(
+		{
+			year: cToday.getYear(),	
+			month: cToday.getMonth(),
+		}
+	);
+
   return 	<ThemeProvider theme={theme}>
 			      <CssBaseline />
 						  <Box sx={{ flexGrow: 1 }}>
-						    <ColignyAppHeader/>
-						    <ColignyCalendarTable
-						    	date={Today}
-						    />
+						  	<CalendarContext.Provider value={[calContext, setCalContext]}>
+							    <ColignyAppHeader/>
+							    <ColignyCalendarTable/>
+						    </CalendarContext.Provider>
 						  </Box>
 				  </ThemeProvider>;
 };
