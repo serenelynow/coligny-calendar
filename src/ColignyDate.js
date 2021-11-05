@@ -47,12 +47,24 @@ export default function ColignyDate (year, month, date, day) {
 		gDate = newGDate;
 	};
 
-	this.isEqual = function (otherDate) {
-		return (
-			(otehrDate.getYear() == year)
-			&& (otherDate.getMonth() == month) 
-			&& (otherDate.getDate() == date)
-		);
+	this.equals = function (otherColignyDate, otherMonth, otherDate) {
+
+		var equals = false;
+		var otherYear, otherMonth, otherDate;
+		if (otherColignyDate instanceof ColignyDate) {
+			otherYear = otherColignyDate.getYear();
+			otherMonth = otherColignyDate.getMonth();
+			otherDate = otherColignyDate.getDate();
+		} else {
+			otherYear = otherColignyDate;
+		}
+
+		equals = (
+			(otherColignyDate == year)
+			&& (otherMonth == month) 
+			&& (otherDate == date)
+		)
+		return equals;
 	}
 
 	this.toString = function (numeric) {

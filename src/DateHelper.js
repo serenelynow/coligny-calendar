@@ -18,17 +18,19 @@ export var gToday = new Date();
 export var cToday = calculateCurrentColignyDate();
 
 export function isToday (type, year, month, date) {
-    var isToday
-    if (type == "g") {
-        var date = new Date(year, month, date);
-        isToday = gToday == date;
-    } else {
-        /* TODO need to finish this*/
-        isToday = (
-            (cToday.getYear() == year)
-        )
-    }
-}
+    var isToday = false;
+    if (type == "g") { // Gregorian
+        if (!(year instanceof Date)) {
+            year = new Date(year, month, date);
+        }
+        // var date = new Date(year, month, date);
+        isToday = gToday.toLocaleDateString() == year.toLocaleDateString();
+    } else if (type == 'c') {
+        isToday = cToday.equals(year, month, date);
+    } 
+
+    return isToday;
+};
 
 function calculateDaysOfWeek() {
 

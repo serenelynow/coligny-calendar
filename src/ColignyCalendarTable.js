@@ -30,12 +30,12 @@ export default function ColignyCalendarTable() {
     borderColor: 'grey.700', 
     width: '13%',
     // wordBreak: 'break-word',
-    padding: {xs: .5, sm: 1},
-    '.coligny-today-cell': { backgroundColor:  'info.main'}
+    padding: {xs: .5, sm: 1}
   };
 
   const dateCellStyles = Object.assign({}, cellStyles);
   dateCellStyles.verticalAlign = 'top;'
+  dateCellStyles['&.coligny-today-cell'] = { bgcolor:  'info.main'};
 
   const rowStyles = { '&:last-child td, &:last-child th': { borderBottom: 0 } };
   const typoStyles = {fontSize: {xs: ".6rem", sm: ".9rem"}};

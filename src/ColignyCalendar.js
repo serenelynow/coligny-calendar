@@ -1,5 +1,5 @@
 import {getMonthName, calculateDaysSinceColBase, baseGregorianDate, getDaysInMonth, getYearInCycle} from './ColignyCycle.js';
-import {equalizeTime, gToday} from './DateHelper.js';
+import * as DateHelper from './DateHelper.js';
 
 export default function ColignyCalendar (year, month) {
     var year;
@@ -79,7 +79,7 @@ export default function ColignyCalendar (year, month) {
         baseGregorianDate.getDate());
       gStartDate.setDate(gStartDate.getDate() + daysSinceZero);
 
-      equalizeTime(gStartDate);
+      DateHelper.equalizeTime(gStartDate);
 
       startDay = gStartDate.getDay();
       rows = generateRows();
@@ -120,7 +120,7 @@ export default function ColignyCalendar (year, month) {
 
         // finish the first week with the actual days
         for (var d = startDay; d < 7; d++) {
-          isToday = (gToday.toLocaleDateString() == gStartDate.toLocaleDateString());
+          isToday = DateHelper.isToday('g', gStartDate);
           rows[r][d] = createData(currentDay, gStartDate.toLocaleDateString([], dateConfig), isToday);
 
           currentDay++;
@@ -142,7 +142,7 @@ export default function ColignyCalendar (year, month) {
           if (currentDay <= daysInMonth) {
 
             // determine today from Gregorian date
-            isToday = (gToday.toLocaleDateString() == gStartDate.toLocaleDateString());
+            isToday = DateHelper.isToday('g', gStartDate);
 
             rows[r][d] = createData(currentDay, gStartDate.toLocaleDateString([], dateConfig), isToday);
 
