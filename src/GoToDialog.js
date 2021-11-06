@@ -27,7 +27,7 @@ export default function GoToDialog(props) {
   const onGoToClick = () => {
     setCalContext(
       calContext => (
-        { ...calContext, year: year, month: month }
+        { ...calContext, year: parseInt(year), month: parseInt(month) }
       )
     );
 

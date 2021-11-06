@@ -42,9 +42,23 @@ function calculateDaysOfWeek() {
 
     var daysOfWeek = {short:[], long: []};
 
+    var language;
+
+    if (typeof Intl !== 'undefined') {
+        try {
+          language = Intl.NumberFormat().resolvedOptions().locale;
+        } catch (err) {
+          console.error("Cannot get locale from Intl")
+        }
+    } else if (window.navigator.languages) {
+        language = window.navigator.languages[0];
+    } else {
+        language = window.navigator.userLanguage || window.navigator.language;
+    }
+
     for (var i = 0; i < 7; i++) {
-        daysOfWeek.short[i] = new Intl.DateTimeFormat('en-US', {weekday: "short"}).format(forDays);
-        daysOfWeek.long[i] = new Intl.DateTimeFormat('en-US', {weekday: "long"}).format(forDays);
+        daysOfWeek.short[i] = new Intl.DateTimeFormat(language, {weekday: "short"}).format(forDays);
+        daysOfWeek.long[i] = new Intl.DateTimeFormat(language, {weekday: "long"}).format(forDays);
 
         // advance to next day
         forDays.setDate(forDays.getDate() + 1);

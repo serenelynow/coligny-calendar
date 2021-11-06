@@ -28,7 +28,7 @@ export default function ColignyCalendarTable() {
     '&:last-child, &:last-child': { borderRight: 0 }, 
     borderRight: '1px solid', 
     borderColor: 'grey.700', 
-    width: '13%',
+    width: '(1/7)%',
     // wordBreak: 'break-word',
     padding: {xs: .5, sm: 1}
   };
