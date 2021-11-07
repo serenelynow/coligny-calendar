@@ -69,7 +69,7 @@ export default function ColignyCalendarTable() {
                   <TableCell align="left" key={"cell"+cIndex}
                     sx={dateCellStyles}
                     className={cell.isToday ? "coligny-today-cell" : ""}>
-                    <Typography sx={dateTypoStyles} variant='body2'>{cell.day}</Typography>
+                    <Typography sx={dateTypoStyles} variant='body1'>{cell.day}</Typography>
                     <Typography sx={typoStyles} variant='body2'>{cell.dateStr}</Typography>
                   </TableCell>
                 ))}
