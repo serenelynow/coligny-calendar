@@ -13,6 +13,7 @@ import MoreVertIcon from '@mui/icons-material/MoreVert';
 import TodayDialog from './TodayDialog.js';
 import GoToDialog from './GoToDialog.js';
 import {gToday} from './DateHelper.js';
+import {l10n} from './l10n.js';
 
 export default function ColignyAppHeader() {
   const [todayOpen, setTodayOpen] = React.useState(false);
@@ -42,9 +43,9 @@ export default function ColignyAppHeader() {
     setGoToOpen(false);
   };
 
-  const iconDisplaySettings = { display: { md: 'inherit', lg: 'none', xl: 'none'  }, mr: 2 };
-  const textDisplaySettings = { paddingRight: 2, display: { xs: 'none', sm: 'none', md:'none', lg:'inherit' } };
-  const toolbarSettings = { paddingRight: { xs: 0, sm: 0, md: 0, lg:'inherit' } };
+  const iconDisplaySettings = { display: { sm: 'block', md: 'none', lg: 'none', xl: 'none'  }, mr: 2 };
+  const textDisplaySettings = { display: { xs: 'none', sm: 'none', md: 'block' } };
+  const toolbarSettings = { paddingRight: { xs: 0, sm: 0, md: 3 } };
 
   return (
     <Box sx={{ flexGrow: 1 }} className="coligny-header">
@@ -62,10 +63,10 @@ export default function ColignyAppHeader() {
           </IconButton>
           <Button variant='text' onClick={handleTodayOpen}
             sx={textDisplaySettings}>
-            Today
+            {l10n.today}
           </Button>
           <Typography variant="h6" component="div" sx={{ flexGrow: 1 , textAlign: 'center'}}>
-            Coligny Calendar
+            {l10n.colignyCalendar}
           </Typography>
           <IconButton
             size="large"
@@ -78,7 +79,7 @@ export default function ColignyAppHeader() {
             <MoreVertIcon />
           </IconButton>
           <Button color="inherit" onClick={handleGoToOpen}
-            sx={textDisplaySettings}>Go To</Button>
+            sx={textDisplaySettings}>{l10n.goto}</Button>
         </Toolbar>
       </AppBar>
       <TodayDialog

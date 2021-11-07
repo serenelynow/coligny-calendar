@@ -10,6 +10,7 @@ import DialogContent from '@mui/material/DialogContent';
 
 import {CalendarContext} from './ColignyApp.js';
 import {cToday} from './DateHelper.js';
+import {l10n} from './l10n.js';
 
 export default function GoToDialog(props) {
   const { onGoTo, onClose, open } = props;
@@ -44,7 +45,7 @@ export default function GoToDialog(props) {
 
   return (
     <Dialog onClose={onCloseClick} open={open} className="coligny-goto-dialog">
-       <DialogTitle>Go To</DialogTitle> 
+       <DialogTitle>{l10n.goto}</DialogTitle> 
 
        <DialogContent>
           <Box
@@ -57,7 +58,7 @@ export default function GoToDialog(props) {
               required
               autoFocus
               id="outlined-number"
-              label="Month"
+              label={l10n.month}
               type="number"
               InputLabelProps={{
                 shrink: true
@@ -70,7 +71,7 @@ export default function GoToDialog(props) {
             <TextField
               required
               id="outlined-number"
-              label="Year"
+              label={l10n.year}
               type="number"
               InputLabelProps={{
                 shrink: true
@@ -84,11 +85,11 @@ export default function GoToDialog(props) {
       </DialogContent>
       <DialogActions>
         <Button variant="outlined" onClick={onCloseClick}>
-          Close
+          {l10n.close}
         </Button>
         <Button variant="outlined" type='submit'
           onClick={onGoToClick}>
-          Go To
+          {l10n.goto}
         </Button>
       </DialogActions>
     </Dialog>

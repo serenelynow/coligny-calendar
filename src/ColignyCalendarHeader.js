@@ -3,10 +3,11 @@ import PropTypes from 'prop-types';
 import Box from '@mui/material/Box';
 import Typography from '@mui/material/Typography';
 
+
+import GoBackOneYear from './GoBackOneYear.js';
+import GoBackOneMonth from './GoBackOneMonth.js';
 import GoForwardOneMonth from './GoForwardOneMonth.js';
 import GoForwardOneYear from './GoForwardOneYear.js';
-import GoBackOneMonth from './GoBackOneMonth.js';
-import GoBackOneYear from './GoBackOneYear.js';
 
 export default function ColignyCalendarHeader(props) {
 	const { label } = props;
@@ -18,10 +19,14 @@ export default function ColignyCalendarHeader(props) {
 	        <Typography variant="h6"
 	         sx={{	paddingLeft: 2,
 	         		paddingRight: 2,
-					display: "inline-block",
-					verticalAlign: 'middle'
-				}}
-			>{label}</Typography>
+							display: "inline-block",
+							verticalAlign: 'middle',
+							fontSize: {xs: "1.15rem"},
+							width: '212px'
+						}}
+					>
+						{label}
+					</Typography>
     		<GoForwardOneMonth/>
     		<GoForwardOneYear/>
     	</Box>

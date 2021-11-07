@@ -1,5 +1,6 @@
 import {baseColignyDate, baseGregorianDate} from './ColignyCycle.js';
 import ColignyDate from './ColignyDate.js';
+import {l10n} from './l10n.js';
 
 export const milliFactor = 24 * 60 * 60 * 1000;
 
@@ -42,19 +43,7 @@ function calculateDaysOfWeek() {
 
     var daysOfWeek = {short:[], long: []};
 
-    var language;
-
-    if (typeof Intl !== 'undefined') {
-        try {
-          language = Intl.NumberFormat().resolvedOptions().locale;
-        } catch (err) {
-          console.error("Cannot get locale from Intl")
-        }
-    } else if (window.navigator.languages) {
-        language = window.navigator.languages[0];
-    } else {
-        language = window.navigator.userLanguage || window.navigator.language;
-    }
+    var language = l10n.getInterfaceLanguage();
 
     for (var i = 0; i < 7; i++) {
         daysOfWeek.short[i] = new Intl.DateTimeFormat(language, {weekday: "short"}).format(forDays);

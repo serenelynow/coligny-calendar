@@ -9,6 +9,7 @@ import DialogContentText from '@mui/material/DialogContentText';
 
 import {cToday, DaysOfWeek} from './DateHelper.js';
 import {CalendarContext} from './ColignyApp.js';
+import {l10n} from './l10n.js';
 
 export default function TodayDialog(props) {
   const { onGoTo, onClose, open } = props;
@@ -33,7 +34,7 @@ export default function TodayDialog(props) {
 
   return (
     <Dialog onClose={onCloseClick} open={open}>
-      <DialogTitle>Today is</DialogTitle>
+      <DialogTitle>{l10n.todayis}</DialogTitle>
       <DialogContent>
         <DialogContentText variant="body1">
           {DaysOfWeek.long[cToday.getDay()]}
@@ -47,10 +48,10 @@ export default function TodayDialog(props) {
       </DialogContent>
       <DialogActions>
         <Button variant="outlined" onClick={onCloseClick}>
-          Close
+          {l10n.close}
         </Button>
         <Button variant="outlined" onClick={onGoToClick}>
-          Go To Today
+          {l10n.gototoday}
         </Button>
       </DialogActions>
     </Dialog>
