@@ -55,5 +55,5 @@ export default function GoForwardOneMonth() {
 	    );
 	};
 
-	return (<IconButton size='small' onClick={goForward}>{">"}</IconButton>);
+	return (<IconButton size='small' onClick={goForward} sx={{paddingLeft: 2, paddingRight: 2}}>{">"}</IconButton>);
 };

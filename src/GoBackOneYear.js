@@ -48,5 +48,5 @@ export default function GoBackOneYear() {
     }
 
 
-	return (<IconButton size='small' onClick={goBack}>{"<<"}</IconButton>);
+	return (<IconButton size='small' onClick={goBack} sx={{paddingLeft: 1, paddingRight: 1}}>{"<<"}</IconButton>);
 };

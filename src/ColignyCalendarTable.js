@@ -35,10 +35,10 @@ export default function ColignyCalendarTable() {
 
   const dateCellStyles = Object.assign({}, cellStyles);
   dateCellStyles.verticalAlign = 'top;'
-  dateCellStyles['&.coligny-today-cell'] = { bgcolor:  'info.main'};
+  dateCellStyles['&.coligny-today-cell'] = { bgcolor:  'bng.today.background', color: 'bng.today.font'};
 
   const rowStyles = { '&:last-child td, &:last-child th': { borderBottom: 0 } };
-  const typoStyles = {fontSize: {xs: ".6rem", sm: ".9rem"}};
+  const typoStyles = {fontSize: {xs: ".6rem", sm: ".8rem", md: ".9rem"}};
   const dateTypoStyles = {fontWeight: 'bold'};
 
 
