@@ -18,14 +18,60 @@ function calculateCurrentColignyDate () {
 export var gToday = new Date();
 export var cToday = calculateCurrentColignyDate();
 
-export function isToday (type, year, month, date) {
-    var isToday = false;
-    if (type == "g") { // Gregorian
-        if (!(year instanceof Date)) {
-            year = new Date(year, month, date);
+var dateConfig = {year: 'numeric', month:'short', day:'2-digit', era:'short'};
+var formatter = new Intl.DateTimeFormat([], dateConfig);
+var formatterEn = new Intl.DateTimeFormat(['en'], dateConfig);
+
+export function formatDateRange(startDate, endDate) {
+    
+    var dateStr = '';
+    var dateRangeArray = formatter.formatRangeToParts(startDate, endDate);
+
+    // get an english one for translation
+    var dateRangeArrayEn = formatterEn.formatRangeToParts(startDate, endDate);
+
+    for (var i = 0; i < dateRangeArray.length; i++) {
+        if (dateRangeArray[i].type == 'era') {
+            if (dateRangeArrayEn[i].value == 'AD'){
+                dateRangeArray[i].value = l10n.ce;
+            } else if (dateRangeArrayEn[i].value == 'BC') {
+                dateRangeArray[i].value = l10n.bce;
+            }
         }
-        // var date = new Date(year, month, date);
-        isToday = gToday.toLocaleDateString() == year.toLocaleDateString();
+        dateStr += dateRangeArray[i].value;
+    }
+    return dateStr;
+};
+
+export function isToday (type, year, month, date) {
+    
+    var isToday = false;
+
+    if (type == "g") { // Gregorian
+        var now = new Date();
+        var compareDate;
+        if (year instanceof Date) {
+            compareDate = new Date(year);
+        } else {
+            compareDate = new Date(year, month, date);
+        }
+
+        isToday = now.toLocaleDateString() == compareDate.toLocaleDateString();
+
+        if (isToday) {
+            // it's the same date and now we need to
+            // check if it's after 6pm of the same date
+            // if it is, this is today
+            isToday = isToday && now.getHours() >= 18;
+        } else {
+            // it's not the same date so we want to 
+            // look at the next compare date to see 
+            // if we are before 6pm of that date
+            // an mark this calendar date as true
+            compareDate.setDate(compareDate.getDate() + 1);
+            isToday = now.toLocaleDateString() == compareDate.toLocaleDateString();
+            isToday = isToday && now.getHours() < 18;
+        }
     } else if (type == 'c') {
         isToday = cToday.equals(year, month, date);
     } 

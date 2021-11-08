@@ -5,6 +5,8 @@
 //    The English word on the left is the word(s) that the translation is for
 
 export const es = {
+	bce: "AEC",
+	ce: "EC",
 	close: "Cerrar",
 	colignyCalendar: "Calendario de Coligny",
 	goto: "Ir a",

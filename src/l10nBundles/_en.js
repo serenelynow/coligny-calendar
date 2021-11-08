@@ -1,4 +1,6 @@
 export const en = { 
+	bce: "BCE",
+	ce: "CE",
 	close: "Close",
 	colignyCalendar: "Coligny Calendar",
 	goto: "Go to",

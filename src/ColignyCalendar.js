@@ -89,13 +89,25 @@ export default function ColignyCalendar (year, month) {
       return rows;
     };
 
-    function createData (day, dateStr, isToday) {
+    function createData (day, gDate, isToday) {
+      var dateStr;
+      
+      if (gDate instanceof Date) {
+
+        var tomorrow = new Date(gDate);
+        tomorrow.setDate(tomorrow.getDate() + 1);
+
+        dateStr = DateHelper.formatDateRange(gDate, tomorrow);
+        
+      } else {
+        dateStr = gDate;
+      }
+      
       return { day, dateStr, isToday };
     };
 
     function generateRows () {
 
-      var dateConfig = {year: 'numeric', month:'short', day:'2-digit', era:'short'};
       var currentDay = 1;
       var daysInMonth = getDaysInMonth(cyclesCompleted, month);
       var r = 0;
@@ -113,8 +125,8 @@ export default function ColignyCalendar (year, month) {
         // finish the first week with the actual days
         for (var d = startDay; d < 7; d++) {
           isToday = DateHelper.isToday('g', gStartDate);
-          rows[r][d] = createData(currentDay, gStartDate.toLocaleDateString([], dateConfig), isToday);
-          
+          rows[r][d] = createData(currentDay, gStartDate, isToday);
+
           currentDay++;
 
           // update this after all work is done to prepare for next calendar day
@@ -134,7 +146,7 @@ export default function ColignyCalendar (year, month) {
             // determine today from Gregorian date
             isToday = DateHelper.isToday('g', gStartDate);
 
-            rows[r][d] = createData(currentDay, gStartDate.toLocaleDateString([], dateConfig), isToday);
+            rows[r][d] = createData(currentDay, gStartDate, isToday);
 
             // update this after all work is done to prepare for next calendar day
             gStartDate.setDate(gStartDate.getDate() + 1);
