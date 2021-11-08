@@ -54,7 +54,7 @@ export default function TodayDialog(props) {
            {now.toLocaleTimeString([], {hour: '2-digit', minute:'2-digit'})}
           </Typography>
         </Box>
-        <Box sx={{marginTop: 3}}>
+        <Box sx={{marginTop: 3, textAlign:"right"}}>
          {/*<Button variant="outlined" onClick={onCloseClick}>
            {l10n.close}
          </Button>*/}
