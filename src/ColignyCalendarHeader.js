@@ -13,7 +13,7 @@ export default function ColignyCalendarHeader(props) {
 	const { label } = props;
 
 	return (
-    	<Box sx={{ flexGrow: 1, textAlign: "center", padding: .25}} className="coligny-cal-header">
+    	<Box sx={{ flexGrow: 1, textAlign: "center", paddingTop: {xs: 1, sm: 2}, paddingBottom: {xs: 1, sm: 2}}} className="coligny-cal-header">
     		<GoBackOneYear/>
     		<GoBackOneMonth/>
 	        <Typography variant="h6"
