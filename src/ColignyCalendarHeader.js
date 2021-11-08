@@ -17,12 +17,12 @@ export default function ColignyCalendarHeader(props) {
     		<GoBackOneYear/>
     		<GoBackOneMonth/>
 	        <Typography variant="h6"
-	         sx={{	paddingLeft: 2,
-	         		paddingRight: 2,
+	         sx={{	paddingLeft: {xs: 0, sm: 2, md: 2},
+	         		paddingRight: {xs: 0, sm: 2, md: 2},
 							display: "inline-block",
 							verticalAlign: 'middle',
-							fontSize: {xs: "1.15rem"},
-							width: '212px'
+							fontSize: {xs: ".95rem", sm:'1.15rem'},
+							width: {xs: '150px', sm: '212px'}
 						}}
 					>
 						{label}

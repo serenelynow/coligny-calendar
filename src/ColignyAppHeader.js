@@ -7,8 +7,8 @@ import Toolbar from '@mui/material/Toolbar';
 import Typography from '@mui/material/Typography';
 import Button from '@mui/material/Button';
 import IconButton from '@mui/material/IconButton';
-import MenuIcon from '@mui/icons-material/Menu';
-import MoreVertIcon from '@mui/icons-material/MoreVert';
+import TodayIcon from '@mui/icons-material/Today';
+import SwapHorizIcon from '@mui/icons-material/SwapHoriz';
 
 import TodayDialog from './TodayDialog.js';
 import GoToDialog from './GoToDialog.js';
@@ -18,8 +18,11 @@ import {l10n} from './l10n.js';
 export default function ColignyAppHeader() {
   const [todayOpen, setTodayOpen] = React.useState(false);
   const [goToOpen, setGoToOpen] = React.useState(false);
+  const [anchorElToday, setAnchorElToday] = React.useState(null);
+  const [anchorElGoTo, setAnchorElGoTo] = React.useState(null);
 
   const handleTodayOpen = () => {
+    setAnchorElToday(event.target);
     setTodayOpen(true);
   };
 
@@ -28,10 +31,12 @@ export default function ColignyAppHeader() {
   };
 
   const handleTodayClose = () => {
+    setAnchorElToday(null);
     setTodayOpen(false);
   };
 
   const handleGoToOpen = () => {
+    setAnchorElGoTo(event.target);
     setGoToOpen(true);
   };
 
@@ -40,6 +45,7 @@ export default function ColignyAppHeader() {
   };
 
   const handleGoToClose = () => {
+    setAnchorElGoTo(null);
     setGoToOpen(false);
   };
 
@@ -55,14 +61,13 @@ export default function ColignyAppHeader() {
             size="large"
             edge="start"
             color="inherit"
-            aria-label="menu"
+            aria-label="{l10n.today}"
             onClick={handleTodayOpen}
             sx={iconDisplaySettings}
           >
-            <MenuIcon />
+            <TodayIcon />
           </IconButton>
-          <Button variant='text' onClick={handleTodayOpen}
-            sx={textDisplaySettings}>
+          <Button color="inherit" onClick={handleTodayOpen} sx={textDisplaySettings}>
             {l10n.today}
           </Button>
           <Typography variant="h6" component="div" sx={{ flexGrow: 1 , textAlign: 'center'}}>
@@ -72,25 +77,28 @@ export default function ColignyAppHeader() {
             size="large"
             edge="start"
             color="inherit"
-            aria-label="more"
+            aria-label="{l10n.goto}"
             onClick={handleGoToOpen}
             sx={iconDisplaySettings}
           >
-            <MoreVertIcon />
+            <SwapHorizIcon />
           </IconButton>
-          <Button color="inherit" onClick={handleGoToOpen}
-            sx={textDisplaySettings}>{l10n.goto}</Button>
+          <Button color="inherit" onClick={handleGoToOpen}sx={textDisplaySettings}>
+            {l10n.goto}
+          </Button>
         </Toolbar>
       </AppBar>
       <TodayDialog
         open={todayOpen}
         onGoTo={handleTodayGoToClick}
         onClose={handleTodayClose}
+        anchorEl={anchorElToday}
       />
       <GoToDialog
         open={goToOpen}
         onGoTo={handleGoToClick}
         onClose={handleGoToClose}
+        anchorEl={anchorElGoTo}
       />
     </Box>
   );
