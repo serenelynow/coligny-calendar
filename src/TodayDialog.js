@@ -42,7 +42,7 @@ export default function TodayDialog(props) {
       open={open}
     >
       <Box sx={{padding: 2}}>
-        <Typography variant="h5" sx={{marginBottom: 2}}>{l10n.todayis}</Typography>
+        <Typography variant="h6" sx={{marginBottom: 2}}>{l10n.todayis}</Typography>
         <Box>
           <Typography variant="body1">
            {DaysOfWeek.long[cToday.getDay()]}

@@ -52,7 +52,7 @@ export default function GoToDialog(props) {
       open={open}
     >
       <Box sx={{padding: 2}}>
-        <Typography variant="h5" sx={{marginBottom: 2}}>{l10n.goto}</Typography>
+        <Typography variant="h6" sx={{marginBottom: 2}}>{l10n.goto}</Typography>
         <form
           component="form"
           sx={{'& > :not(style)': { m: 1 }}}
