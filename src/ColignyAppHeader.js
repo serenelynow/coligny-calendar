@@ -53,9 +53,11 @@ export default function ColignyAppHeader() {
   const textDisplaySettings = { display: { xs: 'none', sm: 'none', md: 'block' } };
   const toolbarSettings = { paddingRight: { xs: 0, sm: 0, md: 3 } };
 
+  const ariaLabelBy = "appTitle";
+
   return (
     <Box sx={{ flexGrow: 1, displayPrint: 'none' }} className="coligny-header">
-      <AppBar position="static">
+      <AppBar position="static" aria-labelledby={ariaLabelBy}>
         <Toolbar sx={toolbarSettings}>
           <IconButton
             size="large"
@@ -70,7 +72,7 @@ export default function ColignyAppHeader() {
           <Button color="inherit" onClick={handleTodayOpen} sx={textDisplaySettings}>
             {l10n.today}
           </Button>
-          <Typography variant="h6" component="div" sx={{ flexGrow: 1 , textAlign: 'center'}}>
+          <Typography id={ariaLabelBy} variant="h6" component="div" sx={{ flexGrow: 1 , textAlign: 'center'}}>
             {l10n.colignyCalendar}
           </Typography>
           <IconButton
@@ -83,7 +85,7 @@ export default function ColignyAppHeader() {
           >
             <SwapHorizIcon />
           </IconButton>
-          <Button color="inherit" onClick={handleGoToOpen}sx={textDisplaySettings}>
+          <Button color="inherit" onClick={handleGoToOpen} sx={textDisplaySettings}>
             {l10n.goto}
           </Button>
         </Toolbar>

@@ -41,5 +41,5 @@ export default function GoForwardOneYear() {
 	    );
     };
 
-	return (<IconButton size='small' onClick={goFoward}  sx={{paddingLeft: 1, paddingRight: 1, displayPrint: 'none'}}>{">>"}</IconButton>);
+	return (<IconButton aria-label={l10n.advanceOneMonth} size='small' onClick={goFoward}  sx={{paddingLeft: 1, paddingRight: 1, displayPrint: 'none'}}>{">>"}</IconButton>);
 };

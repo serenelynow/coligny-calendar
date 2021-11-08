@@ -3,6 +3,7 @@ import IconButton from '@mui/material/IconButton';
 
 import {CalendarContext} from './ColignyApp.js';
 import * as ColignyCycle from './ColignyCycle.js';
+import {l10n} from './l10n.js';
 
 export default function GoBackOneMonth() {
 
@@ -54,5 +55,5 @@ export default function GoBackOneMonth() {
 	    );
 	};
 
-	return (<IconButton size='small' onClick={goBack} sx={{paddingLeft: 2, paddingRight: 2, displayPrint: 'none'}}>{"<"}</IconButton>);
+	return (<IconButton aria-label={l10n.goBackOneMonth} size='small' onClick={goBack} sx={{paddingLeft: 2, paddingRight: 2, displayPrint: 'none'}}>{"<"}</IconButton>);
 };

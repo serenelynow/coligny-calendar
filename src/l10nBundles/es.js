@@ -5,10 +5,14 @@
 //    The English word on the left is the word(s) that the translation is for
 
 export const es = {
+	advanceOneMonth: "Avanzar un mes",
+	advanceOneYear: "Avanzar un año",
 	bce: "AEC",
 	ce: "EC",
 	close: "Cerrar",
 	colignyCalendar: "Calendario de Coligny",
+	goBackOneMonth: "Retroceder un año",
+	goBackOneYear: "Retroceder un mes",
 	goto: "Ir a",
 	gototoday: "Ir a hoy",
 	month: "Mes",
