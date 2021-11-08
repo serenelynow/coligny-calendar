@@ -6,7 +6,6 @@ import { grey } from '@mui/material/colors';
 export default function ColignyTheme () {
 	
 	const prefersDarkMode = useMediaQuery('(prefers-color-scheme: dark)');
-	// const prefersDarkMode = false;
 
 	const bngGreen = "#1D4616";
 	const bngGreenLight = "#33582d";
