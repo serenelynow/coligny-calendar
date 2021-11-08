@@ -54,7 +54,7 @@ export default function ColignyAppHeader() {
   const toolbarSettings = { paddingRight: { xs: 0, sm: 0, md: 3 } };
 
   return (
-    <Box sx={{ flexGrow: 1 }} className="coligny-header">
+    <Box sx={{ flexGrow: 1, displayPrint: 'none' }} className="coligny-header">
       <AppBar position="static">
         <Toolbar sx={toolbarSettings}>
           <IconButton

@@ -53,5 +53,5 @@ export default function GoBackOneMonth() {
 	    );
 	};
 
-	return (<IconButton size='small' onClick={goBack} sx={{paddingLeft: 2, paddingRight: 2}}>{"<"}</IconButton>);
+	return (<IconButton size='small' onClick={goBack} sx={{paddingLeft: 2, paddingRight: 2, displayPrint: 'none'}}>{"<"}</IconButton>);
 };
