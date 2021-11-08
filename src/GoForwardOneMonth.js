@@ -10,17 +10,17 @@ export default function GoForwardOneMonth() {
 
 	function getNextMonth(currentYear, currentMonth) {
 
-		var yearInCycle = ColignyCycle.getYearInCycle(currentYear);
-		var month, year, nextMonth;
+		var yearCycle = ColignyCycle.getYearFromCycle(currentYear);
+		var month = currentMonth + 1;
+		var year, nextMonth;
 
-		month = currentMonth + 1;
-		if (month >= ColignyCycle.colignyCycle[yearInCycle].length) {
+		if (month >= yearCycle.length) {
 			
 			// going into new year now
 			year = currentYear + 1;
 
 			// adjust yearInCycle
-			yearInCycle = ColignyCycle.getYearInCycle(year);
+			yearCycle = ColignyCycle.getYearFromCycle(year);
 
 			// set to first month of year;
 			month = 0;
@@ -31,12 +31,12 @@ export default function GoForwardOneMonth() {
 		}
 
 		//find first month that has days
-		while (ColignyCycle.colignyCycle[yearInCycle].length > month 
-			&& (ColignyCycle.colignyCycle[yearInCycle][month] == 0 || ColignyCycle.colignyCycle[yearInCycle][month] == undefined)) {
+		while (yearCycle.length > month 
+			&& (yearCycle[month] == 0 || yearCycle[month] == undefined)) {
 			month += 1;
 		}
 
-		if (month >= ColignyCycle.colignyCycle[yearInCycle].length ) {
+		if (month >= yearCycle.length ) {
 			nextMonth = getNextMonth(year, month);
 		} else {
 			nextMonth = {year: year, month: month};

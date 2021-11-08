@@ -13,20 +13,15 @@ export default function GoForwardOneYear() {
         // go forward one year
         var year = currentYear + 1; 
         var month = currentMonth;
-        var yearInCycle = ColignyCycle.getYearInCycle(year);
+        var yearCycle = ColignyCycle.getYearFromCycle(year);
         
         // if we currently in an intercalary month
         // then we will go to the month afterwards
-        while (ColignyCycle.colignyCycle[yearInCycle][month] == undefined) {
-            if (m == ColignyCycle.colignyCycle[yearInCycle].length){
+        while (yearCycle[month] == undefined) {
+            if (m == yearCycle.length){
                 
-                //we've reached the end of the year so go to the next year
-                if (yearInCycle == colignyCycle.length - 1) {
-                    
-                    // we've reached the end of the cycle so, start new cycle
-                    yearInCycle = 0;
-                }
                 year++;
+                yearCycle = ColignyCycle.getYearFromCycle(year);
                 month = 0;
             } else {
                 month++; 

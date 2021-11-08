@@ -1,4 +1,4 @@
-import {baseGregorianDate, baseColignyDate, daysInCycle, colignyCycle, daysInEachYear, calculateDate, getMonthName} from './ColignyCycle.js';
+import { calculateDate, getMonthName} from './ColignyCycle.js';
 
 export default function ColignyDate (year, month, date, day) {
 	var month;
@@ -66,6 +66,23 @@ export default function ColignyDate (year, month, date, day) {
 		)
 		return equals;
 	}
+
+	this.isBefore = function(aYear, aMonth, aDate) {
+		var isBefore = false;
+
+		if (year < aYear) {
+			isBefore = true;
+		} else if (year == aYear) {
+			if (month < aMonth){
+				// in same year but month before
+				isBefore = true;
+			} else if ((month == aMonth) && (date < aDate)) {
+				isBefore = true;
+			}
+		}
+
+		return isBefore;
+	};
 
 	this.toString = function (numeric) {
 		var cString;

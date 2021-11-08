@@ -9,28 +9,29 @@ export default function GoBackOneMonth() {
 	const [calContext, setCalContext] = React.useContext(CalendarContext);
 
 	function getPreviousMonth (currentYear, currentMonth) {
-		var yearInCycle = ColignyCycle.getYearInCycle(currentYear);
-		var month, year;
+		var month = currentMonth - 1;
+		var year = currentYear;
+		var yearInCycle;
 
 		var previousMonth;
 
-		month = currentMonth - 1;
 		if (month < 0) {
 			// going into new year now
-			year = currentYear - 1;
+			year = year - 1;
 
 			// adjust yearInCycle
-			yearInCycle = ColignyCycle.getYearInCycle(year);
+			yearInCycle = ColignyCycle.getYearFromCycle(year);
 
 			// get the month index;
-			month = ColignyCycle.colignyCycle[yearInCycle].length - 1;
+			month = yearInCycle.length - 1;
 
 		} else {
 			year = currentYear;
+			yearInCycle = ColignyCycle.getYearFromCycle(year);
 		}
 
 		//find first month that has days
-		while (month > -1 && (ColignyCycle.colignyCycle[yearInCycle][month] == 0 || ColignyCycle.colignyCycle[yearInCycle][month] == undefined)) {
+		while (month > -1 && (yearInCycle[month] == 0 || yearInCycle[month] == undefined)) {
 			month -= 1;
 		}
 

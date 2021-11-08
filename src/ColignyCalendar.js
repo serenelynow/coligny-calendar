@@ -1,4 +1,4 @@
-import {getMonthName, calculateDaysSinceColBase, baseGregorianDate, getDaysInMonth, getYearInCycle} from './ColignyCycle.js';
+import {getMonthName, calculateDaysSinceColBase, baseGregorianDate, getDaysInMonth, getCyclesCompleted} from './ColignyCycle.js';
 import * as DateHelper from './DateHelper.js';
 
 export default function ColignyCalendar (year, month) {
@@ -6,8 +6,8 @@ export default function ColignyCalendar (year, month) {
     var month;
     var startDay;
     var gStartDate;
-    var yearInCycle;
     var rows;
+    var cyclesCompleted;
 
     this.toString = function (numeric) {
 
@@ -27,7 +27,7 @@ export default function ColignyCalendar (year, month) {
 
     this.setYear = function (newYear) {
       year = parseInt(newYear);
-      yearInCycle = getYearInCycle(year);
+      cyclesCompleted = getCyclesCompleted(year);
 
       if (year != undefined && month != undefined) {
         this.calculateStartDay();
@@ -65,10 +65,6 @@ export default function ColignyCalendar (year, month) {
       startDay = newStartDay;
     };
 
-    this.getYearInCycle = function () {
-      return yearInCycle;
-    };
-
     this.calculateStartDay = function () {
       // get days from zero for today
       var daysSinceZero = calculateDaysSinceColBase(year, month, 1);
@@ -83,10 +79,6 @@ export default function ColignyCalendar (year, month) {
 
       startDay = gStartDate.getDay();
       rows = generateRows();
-    };
-
-    this.getDaysInMonth = function () {
-      return getDaysInMonth(yearInCycle, month);
     };
 
     this.getRows = function () {
@@ -105,7 +97,7 @@ export default function ColignyCalendar (year, month) {
 
       var dateConfig = {year: 'numeric', month:'short', day:'2-digit', era:'short'};
       var currentDay = 1;
-      var daysInMonth = getDaysInMonth(yearInCycle, month);
+      var daysInMonth = getDaysInMonth(cyclesCompleted, month);
       var r = 0;
       var isToday;
       rows = [];
@@ -122,7 +114,7 @@ export default function ColignyCalendar (year, month) {
         for (var d = startDay; d < 7; d++) {
           isToday = DateHelper.isToday('g', gStartDate);
           rows[r][d] = createData(currentDay, gStartDate.toLocaleDateString([], dateConfig), isToday);
-
+          
           currentDay++;
 
           // update this after all work is done to prepare for next calendar day
@@ -131,14 +123,12 @@ export default function ColignyCalendar (year, month) {
 
         r = 1;
 
-        currentDay = 7 - startDay;
+        currentDay = 7 - startDay + 1;
       } 
-
 
       while (currentDay <= daysInMonth) {
         rows[r] = [];
         for (var d = 0; d < 7; d++) {
-          currentDay +=1;
           if (currentDay <= daysInMonth) {
 
             // determine today from Gregorian date
@@ -153,6 +143,7 @@ export default function ColignyCalendar (year, month) {
             // we've finished the days of the month and need to add the blank days
             rows[r][d] = createData("", "");
           }
+          currentDay +=1;
         };
         r++;
       };
