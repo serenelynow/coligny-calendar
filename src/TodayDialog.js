@@ -29,6 +29,7 @@ export default function TodayDialog(props) {
   };
 
   var now = new Date();
+  now.setHours(now.getHours() + getStartOfDayHour());
 
   return (
 

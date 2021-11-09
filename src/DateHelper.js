@@ -1,4 +1,4 @@
-import {baseColignyDate, baseGregorianDate} from './ColignyCycle.js';
+import {baseColignyDate, baseGregorianDate, getStartOfDayHour} from './ColignyCycle.js';
 import ColignyDate from './ColignyDate.js';
 import {l10n} from './l10n.js';
 
@@ -16,6 +16,7 @@ function calculateCurrentColignyDate () {
 };
 
 export var gToday = new Date();
+gToday.setHours(gToday.getHours() + getStartOfDayHour());
 export var cToday = calculateCurrentColignyDate();
 
 var dateConfig = {year: 'numeric', month:'short', day:'2-digit', era:'short'};
@@ -48,32 +49,25 @@ export function isToday (type, year, month, date) {
     var isToday = false;
 
     if (type == "g") { // Gregorian
-        var now = new Date();
+        // var now = new Date();
         var compareDate;
         if (year instanceof Date) {
-            compareDate = new Date(year);
+            // compareDate = new Date(year);
+            compareDate = year;
         } else {
             compareDate = new Date(year, month, date);
         }
 
-        isToday = now.toLocaleDateString() == compareDate.toLocaleDateString();
+        isToday = gToday.toLocaleDateString() == compareDate.toLocaleDateString();
 
-        if (isToday) {
-            // it's the same date and now we need to
-            // check if it's after 6pm of the same date
-            // if it is, this is today
-            isToday = isToday && now.getHours() >= 18;
-        } else {
-            // it's not the same date so we want to 
-            // look at the next compare date to see 
-            // if we are before 6pm of that date
-            // an mark this calendar date as true
-            compareDate.setDate(compareDate.getDate() + 1);
-            isToday = now.toLocaleDateString() == compareDate.toLocaleDateString();
-            isToday = isToday && now.getHours() < 18;
-        }
     } else if (type == 'c') {
-        isToday = cToday.equals(year, month, date);
+        if (year instanceof ColignyDate) {
+            compareDate = year;
+        } else {
+            compareDate = new ColignyDate(year, month, date);
+        }
+        
+        isToday = cToday.equals(compareDate);
     } 
 
     return isToday;

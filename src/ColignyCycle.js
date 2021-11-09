@@ -4,11 +4,12 @@ import ColignyDate from './ColignyDate.js';
 // dates according to http://www.coligny-app.com
 export const baseGregorianDate = new Date(2003,4,8);
 export const baseColignyDate = new ColignyDate (5003, 0, 1, baseGregorianDate.getDay());
+const startOfDayHour = -18;
 
 const colignyMonths = [ 
     "Quimonios", "Samonios", "Dumanios", "Riuros", "Anagantios", "Orgronios", "Cutios", "Rantaranos", "Giamonios", "Simiuisonna", "Equos", "Elembi", "Aedrinni", "Cantlos"
 ]; // 14 months
-const equos = 10;
+// const equos = 10;
 
 // start constructiong the full cycle
 var metonicCycle = [
@@ -68,6 +69,10 @@ for (d = 0; d < 28; d++) {
 // 29 days have been removed in the end.
 
 /* EQUOS 5013 IN COLIGNY APP HAS 29 DAYS BUT I HAVE 30 */
+
+export function getStartOfDayHour() {
+    return startOfDayHour;
+}
 
 function calculateFullCycleTotals () {
     // fullCycleTotals = {
