@@ -3,6 +3,7 @@ import IconButton from '@mui/material/IconButton';
 
 import {CalendarContext} from './ColignyApp.js';
 import * as ColignyCycle from './ColignyCycle.js';
+import {l10n} from './l10n.js';
 
 export default function GoForwardOneYear() {
 
