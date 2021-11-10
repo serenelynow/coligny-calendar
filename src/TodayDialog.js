@@ -6,7 +6,8 @@ import Popover from '@mui/material/Popover';
 import Typography from '@mui/material/Typography';
 
 import {cToday, DaysOfWeek} from './DateHelper.js';
-import {CalendarContext} from './ColignyApp.js';
+import {CalendarContext} from './CalendarContext.js';
+import {getStartOfDayHour} from './ColignyCycle.js';
 import {l10n} from './l10n.js';
 
 export default function TodayDialog(props) {

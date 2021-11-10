@@ -8,16 +8,14 @@ import ColignyAppHeader from './ColignyAppHeader.js';
 import ColignyCalendarTable from './ColignyCalendarTable.js';
 import {gToday, cToday} from './DateHelper.js';
 import ColignyTheme from './ColignyTheme.js';
+import {CalendarContext} from './CalendarContext.js';
 
-export const CalendarContext = React.createContext([{}, () => {}]);
-
-export default function ColignyApp() {
-  
+function ColignyApp() {
 
 	const [calContext, setCalContext] = React.useState(
 		{
 			year: cToday.getYear(),	
-			month: cToday.getMonth(),
+			month: cToday.getMonth()
 		}
 	);
 
@@ -31,3 +29,7 @@ export default function ColignyApp() {
 				</Box>
 			</ThemeProvider>;
 };
+
+ColignyApp.contextType = CalendarContext;
+
+export default ColignyApp;

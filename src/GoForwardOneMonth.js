@@ -1,7 +1,7 @@
 import * as React from 'react';
 import IconButton from '@mui/material/IconButton';
 
-import {CalendarContext} from './ColignyApp.js';
+import {CalendarContext} from './CalendarContext.js';
 import * as ColignyCycle from './ColignyCycle.js';
 import {l10n} from './l10n.js';
 

@@ -6,7 +6,7 @@ import Box from '@mui/material/Box';
 import TextField from '@mui/material/TextField';
 import Button from '@mui/material/Button';
 
-import {CalendarContext} from './ColignyApp.js';
+import {CalendarContext} from './CalendarContext.js';
 import {cToday} from './DateHelper.js';
 import {l10n} from './l10n.js';
 
