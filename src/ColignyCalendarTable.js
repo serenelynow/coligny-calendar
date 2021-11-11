@@ -12,7 +12,7 @@ import Typography from '@mui/material/Typography';
 
 import {gToday, DaysOfWeek} from './DateHelper.js';
 import ColignyCalendarHeader from './ColignyCalendarHeader.js';
-import ColignyCalendar from './ColignyCalendar.js';
+import ColignyMonth from './ColignyMonth.js';
 import {CalendarContext} from './CalendarContext.js';
 
 export function getCurrentCalendar() {
@@ -41,7 +41,7 @@ class ColignyCalendarTable extends React.Component {
   #dateTypoStyles = {fontWeight: 'bold'};
 
 
-  #calendar = new ColignyCalendar(0, 0);
+  #calendar = new ColignyMonth(0, 0);
 
   static contextType = CalendarContext; 
 

@@ -1,7 +1,7 @@
 import {getMonthName, calculateDaysSinceColBase, baseGregorianDate, getDaysInMonth, getCyclesCompleted} from './ColignyCycle.js';
 import * as DateHelper from './DateHelper.js';
 
-export default function ColignyCalendar (year, month) {
+export default function ColignyMonth (year, month) {
     var year;
     var month;
     var startDay;
