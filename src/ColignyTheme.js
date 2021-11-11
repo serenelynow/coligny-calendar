@@ -4,17 +4,15 @@ import { useTheme, createTheme } from '@mui/material/styles';
 import { grey } from '@mui/material/colors';
 
 export default function ColignyTheme () {
-	
-	const prefersDarkMode = useMediaQuery('(prefers-color-scheme: dark)');
+
+	const prefersDarkMode = window.matchMedia('(prefers-color-scheme: dark)').matches;
 
 	const bngGreen = "#1D4616";
 	const bngGreenLight = "#33582d";
 	const bngYellow = '#CECF2F';
 	const bngYellowLight = "#d7d858";
 
-
-	return React.useMemo(
-	  () =>
+	const theme = 
 	    createTheme({
 	      palette: {
 	        mode: prefersDarkMode ? 'dark' : 'light',
@@ -58,8 +56,8 @@ export default function ColignyTheme () {
 			        )
 			      }
 			    }
-				}
-	    }),
-	  [prefersDarkMode],
-	);
+			}
+	    });
+
+	return theme;
 };

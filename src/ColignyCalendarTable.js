@@ -45,17 +45,11 @@ class ColignyCalendarTable extends React.Component {
 
   static contextType = CalendarContext; 
 
-  constructor(props) {
-    super(props);
-    this.state = {doneLoading: true};
-  }
-
   render () {
 
     const [calContext, setCalContext] = this.context;
     this.#calendar.setYear(calContext.year);
     this.#calendar.setMonth(calContext.month);
-    // this.state.doneLoading = true;
 
     return (
       
