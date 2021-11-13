@@ -9,6 +9,16 @@ export default function GoForwardOneMonth() {
 
 	const [calContext, setCalContext] = React.useContext(CalendarContext);
 
+	const finishedLoading = () => {
+	    var calendar = calContext.calendar;
+
+	    setCalContext(
+	      calContext => (
+	        { ...calContext, year: calendar.getYear(), month: calendar.getMonth(), isLoaded:true }
+	      )
+	    );
+	}
+
 	function getNextMonth(currentYear, currentMonth) {
 
 		var yearCycle = ColignyCycle.getYearFromCycle(currentYear);
@@ -48,12 +58,14 @@ export default function GoForwardOneMonth() {
 	};
 
 	function goForward () {
-		var nextMonth = getNextMonth(calContext.year, calContext.month);
 		setCalContext(
-	      	calContext => (
-		        { ...calContext, year: nextMonth.year, month: nextMonth.month }
-		      )
+	      calContext => (
+	        { ...calContext, isLoaded:false }
+	      )
 	    );
+
+		var nextMonth = getNextMonth(calContext.year, calContext.month);
+		calContext.calendar.update(nextMonth.year, nextMonth.month, true, finishedLoading);
 	};
 
 	return (<IconButton aria-label={l10n.advanceOneMonth} size='small' onClick={goForward} sx={{paddingLeft: 2, paddingRight: 2, displayPrint: 'none'}}>{">"}</IconButton>);

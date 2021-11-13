@@ -19,18 +19,31 @@ export default function GoToDialog(props) {
   var year = calContext.year;
   var month = calContext.month;
 
+  const finishedLoading = () => {
+      var calendar = calContext.calendar;
+
+      setCalContext(
+        calContext => (
+          { ...calContext, year: calendar.getYear(), month: calendar.getMonth(), isLoaded:true }
+        )
+      );
+      onGoTo(calContext);
+  }
+
   const onCloseClick = () => {
     onClose();
   };
 
   const onGoToClick = () => {
-    event.preventDefault();
     setCalContext(
-      calContext => (
-        { ...calContext, year: parseInt(year), month: parseInt(month) }
-      )
+        calContext => (
+          { ...calContext, isLoaded:false }
+        )
     );
-    onGoTo(calContext);
+
+    event.preventDefault();
+
+    calContext.calendar.update(parseInt(year), parseInt(month),  true, finishedLoading);
   };
 
   const handleYearChange = (event) => {
@@ -99,55 +112,6 @@ export default function GoToDialog(props) {
         </form>
       </Box>
     </Popover>
-
-    // <Dialog onClose={onCloseClick} open={open} className="coligny-goto-dialog">
-    //    <DialogTitle>{l10n.goto}</DialogTitle> 
-    //    <DialogContent>
-    //       <Box
-    //         component="form"
-    //         sx={{
-    //           '& > :not(style)': { m: 1 },
-    //         }}
-    //       >
-    //         <TextField
-    //           required
-    //           autoFocus
-    //           id="outlined-number"
-    //           label={l10n.month}
-    //           type="number"
-    //           InputLabelProps={{
-    //             shrink: true
-    //           }}
-    //           defaultValue={month}
-    //           onChange={handleMonthChange}
-    //           onFocus={event => {
-    //             event.target.select()}}
-    //           />
-    //         <TextField
-    //           required
-    //           id="outlined-number"
-    //           label={l10n.year}
-    //           type="number"
-    //           InputLabelProps={{
-    //             shrink: true
-    //           }}
-    //           defaultValue={year}
-    //           onChange={handleYearChange}
-    //           onFocus={event => {
-    //             event.target.select()}}
-    //           />
-    //       </Box>
-    //   </DialogContent>
-    //   <DialogActions>
-    //     <Button variant="outlined" onClick={onCloseClick}>
-    //       {l10n.close}
-    //     </Button>
-    //     <Button variant="outlined" type='submit'
-    //       onClick={onGoToClick}>
-    //       {l10n.goto}
-    //     </Button>
-    //   </DialogActions>
-    // </Dialog>
   );
 }
 

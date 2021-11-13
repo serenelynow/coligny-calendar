@@ -9,6 +9,16 @@ export default function GoForwardOneYear() {
 
 	const [calContext, setCalContext] = React.useContext(CalendarContext);
 
+    const finishedLoading = () => {
+        var calendar = calContext.calendar;
+
+        setCalContext(
+          calContext => (
+            { ...calContext, year: calendar.getYear(), month: calendar.getMonth(), isLoaded:true }
+          )
+        );
+    }
+
 	function getNextYear(currentYear, currentMonth) {
         
         // go forward one year
@@ -34,12 +44,13 @@ export default function GoForwardOneYear() {
     };
 
     function goFoward () {
-        var yearNext = getNextYear(calContext.year, calContext.month);
         setCalContext(
-			calContext => (
-		      { ...calContext, year: yearNext.year, month: yearNext.month }
-		    )
-	    );
+          calContext => (
+            { ...calContext, isLoaded:false }
+          )
+        );
+        var yearNext = getNextYear(calContext.year, calContext.month);
+        calContext.calendar.update(yearNext.year, yearNext.month, true, finishedLoading);
     };
 
 	return (<IconButton aria-label={l10n.advanceOneMonth} size='small' onClick={goFoward}  sx={{paddingLeft: 1, paddingRight: 1, displayPrint: 'none'}}>{">>"}</IconButton>);

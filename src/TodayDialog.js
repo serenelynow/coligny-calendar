@@ -13,20 +13,33 @@ import {l10n} from './l10n.js';
 export default function TodayDialog(props) {
   const { onGoTo, onClose, open, anchorEl } = props;
 
+  const [calContext, setCalContext] = React.useContext(CalendarContext);
+
   const onCloseClick = () => {
     onClose(cToday);
   };
-  
-  const [calContext, setCalContext] = React.useContext(CalendarContext);
 
-  const onGoToClick = () => {
+  const finishedLoading = () => {
+    var calendar = calContext.calendar;
+
     setCalContext(
       calContext => (
-        { ...calContext, year: cToday.getYear(), month: cToday.getMonth() }
+        { ...calContext, year: calendar.getYear(), month: calendar.getMonth(), isLoaded:true }
       )
     );
 
     onGoTo();
+  }
+
+  const onGoToClick = () => {
+    
+    setCalContext(
+      calContext => (
+        { ...calContext, isLoaded:false }
+      )
+    );
+
+    calContext.calendar.update(cToday.getYear(), cToday.getMonth(),  true, finishedLoading);
   };
 
   var now = new Date();

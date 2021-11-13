@@ -9,6 +9,7 @@ import Paper from '@mui/material/Paper';
 import PropTypes from 'prop-types';
 import Box from '@mui/material/Box';
 import Typography from '@mui/material/Typography';
+import Skeleton from '@mui/material/Skeleton';
 
 import {gToday, DaysOfWeek} from './DateHelper.js';
 import ColignyCalendarHeader from './ColignyCalendarHeader.js';
@@ -38,59 +39,83 @@ class ColignyCalendarTable extends React.Component {
 
   #rowStyles = { '&:last-child td, &:last-child th': { borderBottom: 0 } };
   #typoStyles = {fontSize: {xs: ".6rem", sm: ".8rem", md: ".9rem"}};
-  #dateTypoStyles = {fontWeight: 'bold'};
+  #dateTypoStyles = {fontWeight: 'bold', display: 'inline'};
 
+  finishedLoading = () =>  {
+    const [calContext, setCalContext] = this.context;
+    setCalContext(
+      calContext => (
+        { ...calContext, isLoaded: true }
+      )
+    );
+  }
+  
+  componentDidMount() {
+    const [calContext, setCalContext] = this.context;
+    setCalContext(
+      calContext => (
+        { ...calContext, isLoaded: false }
+      )
+    );
+    calContext.calendar.update(calContext.year, calContext.month, false, this.finishedLoading);
+  }
 
-  #calendar = new ColignyMonth(0, 0);
-
-  static contextType = CalendarContext; 
 
   render () {
-
     const [calContext, setCalContext] = this.context;
-    this.#calendar.setYear(calContext.year);
-    this.#calendar.setMonth(calContext.month);
 
-    return (
-      
-      <Box className="coligny-calendar-table">
-        <ColignyCalendarHeader
-          label={this.#calendar.toString()}/>
-        <TableContainer component={Paper}>
-          <Table>
-            <TableHead>
-              <TableRow>
-                {DaysOfWeek.short.map((name) => (
-                  <TableCell align="center" key={name}
-                    sx={this.#cellStyles}>
-                    <Typography sx={{fontWeight: 'bold}'}}>{name}</Typography>
-                  </TableCell>             
-                ))}
-              </TableRow>
-            </TableHead>
-            
-            <TableBody>
-              {this.#calendar.getRows().map((row, rIndex) => (
-                <TableRow
-                  sx={this.#rowStyles}
-                  key={"row"+rIndex}>
-                  {row.map((cell, cIndex) => (
-                    <TableCell align="left" key={"cell"+cIndex}
-                      sx={this.#dateCellStyles}
-                      className={cell.isToday ? "coligny-today-cell" : ""}>
-                      <Typography sx={this.#dateTypoStyles} variant='body1'>{cell.day}</Typography>
-                      <Typography sx={this.#typoStyles} variant='body2'>{cell.dateStr}</Typography>
-                    </TableCell>
+    if (calContext.isLoaded == false) {
+      return (
+        <Box>
+          <Skeleton variant="rectangular" width={'100%'} height={118} />
+          <Skeleton variant="rectangular" width={'100%'} height={400} />
+        </Box>
+      );
+    } else {
+
+      return (
+        <Box className="coligny-calendar-table">
+          <ColignyCalendarHeader
+            label={calContext.calendar.toString()}/>
+          <TableContainer component={Paper}>
+            <Table>
+
+              <TableHead>
+                <TableRow>
+                  {DaysOfWeek.short.map((name) => (
+                    <TableCell align="center" key={name}
+                      sx={this.#cellStyles}>
+                      <Typography sx={{fontWeight: 'bold}'}}>{name}</Typography>
+                    </TableCell>             
                   ))}
                 </TableRow>
-              ))}
-            </TableBody>
-          </Table>
-        </TableContainer>
-      </Box>
+              </TableHead>
+        
+              <TableBody>
+                {calContext.calendar.getRows().map((row, rIndex) => (
+                  <TableRow
+                    sx={this.#rowStyles}
+                    key={"row"+rIndex}>
+                    {row.map((cell, cIndex) => (
+                      <TableCell align="left" key={"cell"+cIndex}
+                        sx={this.#dateCellStyles}
+                        className={cell.isToday ? "coligny-today-cell" : ""}>
+                        <Box>
+                          <Typography sx={this.#dateTypoStyles} variant='body1'>{cell.day}</Typography>
+                          <Box dangerouslySetInnerHTML={{__html: cell.moonPhase}} sx={{display: 'inline', float: 'right', '&>svg circle': {stroke: 'black', strokeWidth: "1"}}}></Box>
+                        </Box>
+                        <Typography sx={this.#typoStyles} variant='body2'>{cell.dateStr}</Typography>
+                      </TableCell>
+                    ))}
+                  </TableRow>
+                ))}
+              </TableBody>
 
-     
-    );
+            </Table>
+          </TableContainer>
+        </Box>
+      );
+    }
   };
 };
 

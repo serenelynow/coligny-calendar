@@ -9,6 +9,16 @@ export default function GoBackOneMonth() {
 
 	const [calContext, setCalContext] = React.useContext(CalendarContext);
 
+	const finishedLoading = () => {
+	    var calendar = calContext.calendar;
+
+	    setCalContext(
+	      calContext => (
+	        { ...calContext, year: calendar.getYear(), month: calendar.getMonth(), isLoaded:true }
+	      )
+	    );
+	 }
+	
 	function getPreviousMonth (currentYear, currentMonth) {
 		var month = currentMonth - 1;
 		var year = currentYear;
@@ -47,12 +57,13 @@ export default function GoBackOneMonth() {
 
 
 	function goBack () {
-		var previousMonth = getPreviousMonth(calContext.year, calContext.month);
 		setCalContext(
-			calContext => (
-		      { ...calContext, year: previousMonth.year, month: previousMonth.month }
-		    )
+	      calContext => (
+	        { ...calContext, isLoaded:false }
+	      )
 	    );
+		var previousMonth = getPreviousMonth(calContext.year, calContext.month);
+		calContext.calendar.update(previousMonth.year, previousMonth.month, true, finishedLoading);
 	};
 
 	return (<IconButton aria-label={l10n.goBackOneMonth} size='small' onClick={goBack} sx={{paddingLeft: 2, paddingRight: 2, displayPrint: 'none'}}>{"<"}</IconButton>);

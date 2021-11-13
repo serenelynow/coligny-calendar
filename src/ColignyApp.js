@@ -5,6 +5,7 @@ import { ThemeProvider } from '@mui/material/styles';
 
 // Coligny App specific modules
 import ColignyAppHeader from './ColignyAppHeader.js';
+import ColignyMonth from './ColignyMonth.js';
 import ColignyCalendarTable from './ColignyCalendarTable.js';
 import {gToday, cToday} from './DateHelper.js';
 import ColignyTheme from './ColignyTheme.js';
@@ -16,7 +17,9 @@ class ColignyApp extends React.Component {
 		super(props);
 		this.state = {
 			year: cToday.getYear(),	
-			month: cToday.getMonth()
+			month: cToday.getMonth(),
+			calendar: new ColignyMonth(),
+			isLoaded: false
 		};
 	};
 

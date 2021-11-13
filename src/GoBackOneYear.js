@@ -9,6 +9,16 @@ export default function GoBackOneYear() {
 
 	const [calContext, setCalContext] = React.useContext(CalendarContext);
 
+    const finishedLoading = () => {
+        var calendar = calContext.calendar;
+
+        setCalContext(
+          calContext => (
+            { ...calContext, year: calendar.getYear(), month: calendar.getMonth(), isLoaded:true }
+          )
+        );
+    }
+
 	function getPreviousYear (currentYear, currentMonth) {
         
         // go back one year
@@ -35,12 +45,13 @@ export default function GoBackOneYear() {
     }
 
     function goBack() {
-        var yearPrevious = getPreviousYear(calContext.year, calContext.month);
         setCalContext(
-			calContext => (
-		      { ...calContext, year: yearPrevious.year, month: yearPrevious.month }
-		    )
-	    );
+          calContext => (
+            { ...calContext, isLoaded:false }
+          )
+        );
+        var yearPrevious = getPreviousYear(calContext.year, calContext.month);
+        calContext.calendar.update(yearPrevious.year, yearPrevious.month, true, finishedLoading);
     }
 
 
