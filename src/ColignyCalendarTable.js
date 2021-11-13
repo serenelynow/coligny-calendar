@@ -97,7 +97,7 @@ class ColignyCalendarTable extends React.Component {
                       className={cell.isToday ? "coligny-today-cell" : ""}>
                       <Box>
                         <Typography sx={this.#dateTypoStyles} variant='body1'>{cell.day}</Typography>
-                        <Box dangerouslySetInnerHTML={{__html: cell.moonPhase}} sx={{display: 'inline', float: 'right', '&>svg circle': {stroke: 'black', strokeWidth: "1"}}}></Box>
+                        <Box dangerouslySetInnerHTML={{__html: cell.moonPhase}} sx={{display: 'inline', float: 'right', '&>svg': {width: {xs: '15', md: '20'}}, '&>svg circle': {stroke: 'black', strokeWidth: "1"}}}></Box>
                       </Box>
                       <Typography sx={this.#typoStyles} variant='body2'>{cell.dateStr}</Typography>
                     </TableCell>
