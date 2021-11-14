@@ -86,7 +86,7 @@ export default function ColignyDate (year, month, date, day) {
 	};
 
 	this.toLocaleDateString = function () {
-		return toLocaleDateString(this);
+		return toLocaleDateString(this, gDate);
 	};
 	
 	if (month == undefined && date == undefined ) {

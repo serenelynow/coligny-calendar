@@ -23,12 +23,12 @@ var dateConfig = {year: 'numeric', month:'short', day:'2-digit', era:'short'};
 var formatter = new Intl.DateTimeFormat([], dateConfig);
 var formatterEn = new Intl.DateTimeFormat(['en'], dateConfig);
 
-export function toLocaleDateString(cDate) {
+export function toLocaleDateString(cDate, gDate) {
     var fConfig = {year: 'numeric', month:'long', day:'2-digit', era:'short'};
     var dateFormater = new Intl.DateTimeFormat([], dateConfig);
-    var now = new Date();
 
-    var dateParts = dateFormater.formatToParts(now);
+    var fDate = (gDate != undefined) ? gDate : new Date();
+    var dateParts = dateFormater.formatToParts(fDate);
     var dateStr = '';
     for (var i = 0; i < dateParts.length; i++) {
         var part = dateParts[i];
