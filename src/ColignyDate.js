@@ -1,4 +1,5 @@
 import { calculateDate, getMonthName} from './ColignyCycle.js';
+import {toLocaleDateString} from './DateHelper.js';
 
 export default function ColignyDate (year, month, date, day) {
 	var month;
@@ -84,15 +85,8 @@ export default function ColignyDate (year, month, date, day) {
 		return isBefore;
 	};
 
-	this.toString = function (numeric) {
-		var cString;
-		if (numeric == true) { 
-			cString = this.getMonth() + "/" + this.getDate() + "/" + this.getYear();
-		} else {
-			cString = this.getMonthName() + " " + this.getDate() + ", " + this.getYear();
-		}
-
-		return cString;
+	this.toLocaleDateString = function () {
+		return toLocaleDateString(this);
 	};
 	
 	if (month == undefined && date == undefined ) {

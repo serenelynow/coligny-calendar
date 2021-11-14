@@ -23,6 +23,38 @@ var dateConfig = {year: 'numeric', month:'short', day:'2-digit', era:'short'};
 var formatter = new Intl.DateTimeFormat([], dateConfig);
 var formatterEn = new Intl.DateTimeFormat(['en'], dateConfig);
 
+export function toLocaleDateString(cDate) {
+    var fConfig = {year: 'numeric', month:'long', day:'2-digit', era:'short'};
+    var dateFormater = new Intl.DateTimeFormat([], dateConfig);
+    var now = new Date();
+
+    var dateParts = dateFormater.formatToParts(now);
+    var dateStr = '';
+    for (var i = 0; i < dateParts.length; i++) {
+        var part = dateParts[i];
+        
+        switch(part.type) {
+            case 'month': 
+                dateStr += cDate.getMonthName();
+                break;
+            case 'year':
+                dateStr += cDate.getYear();
+                break;
+            case 'date':
+                dateStr += cDate.getDate();
+                break;
+            case 'era':
+                dateStr += 'BG';
+                break;
+            default:
+                dateStr += part.value;
+        }
+
+    }
+
+    return dateStr;
+}
+
 export function formatDateRange(startDate, endDate) {
     
     var dateStr = '';

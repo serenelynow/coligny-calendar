@@ -63,7 +63,7 @@ export default function TodayDialog(props) {
            {DaysOfWeek.long[cToday.getDay()]}
           </Typography>
           <Typography variant="h6">
-           {cToday.toString()}
+           {cToday.toLocaleDateString()}
           </Typography>
           <Typography variant="body1">
            {now.toLocaleTimeString([], {hour: '2-digit', minute:'2-digit'})}
