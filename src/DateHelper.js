@@ -40,7 +40,7 @@ export function toLocaleDateString(cDate, gDate) {
             case 'year':
                 dateStr += cDate.getYear();
                 break;
-            case 'date':
+            case 'day':
                 dateStr += cDate.getDate();
                 break;
             case 'era':
