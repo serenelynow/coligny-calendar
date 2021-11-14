@@ -5,6 +5,8 @@
 //    The English word on the left is the word(s) that the translation is for
 
 export const es = {
+	about: "Cerca de",
+	aboutDesc: "Este calendario fue desarrollado en base a la investigación de {0} de la tablilla de piedra del calendario encontrada en Coligny, Francia en 1897. Este calendario se basa en un ciclo solilunar metónico de 19 años. Los días comienzan a las 6 pm hora local, por lo que abarcan dos fechas gregorianas.",
 	advanceOneMonth: "Avanzar un mes",
 	advanceOneYear: "Avanzar un año",
 	bce: "AEC",
