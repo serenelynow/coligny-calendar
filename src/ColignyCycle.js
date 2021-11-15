@@ -224,11 +224,11 @@ export function getYearFromCycle(year) {
     return yearFromCycle;
 };
 
-export function getDaysInMonth(year, month) {
+function getObject(year, month){
     // year could be an object from getCyclesCompleted
 
     var cyclesCompleted = Number.isInteger(year) ? getCyclesCompleted(year) : year;
-    var d, m, y;
+    var d, m, y, returnObject;
 
     if (cyclesCompleted.isBeforeBaseDate == true) {
 
@@ -244,8 +244,34 @@ export function getDaysInMonth(year, month) {
 
     }
 
+    if (month != undefined) {
+        returnObject = fullCycle[d][m][y][month];
+    } else {
+         returnObject = fullCycle[d][m][y];
 
-    return fullCycle[d][m][y][month]; // was subtracting 1 but took it out
+    }
+
+    return returnObject; // was subtracting 1 but took it out
+}
+
+export function getMonthsInYear(year) {
+    var thatYear = getObject(year);
+    var months = [];
+
+    for (var month = 0; month < thatYear.length; month++) {
+        if (thatYear[month] != undefined && thatYear[month] != 0) {
+            months[month] = {
+                index: month,
+                name: getMonthName(month)
+            };
+        }
+    }
+
+    return months;
+}
+
+export function getDaysInMonth(year, month) {
+    return getObject(year, month);
 }
 
 export function getCyclesCompleted(year) {
