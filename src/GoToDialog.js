@@ -35,10 +35,6 @@ export default function GoToDialog(props) {
     );
 
     onGoTo(calContext);
-  }
-
-  const onCloseClick = () => {
-    onClose();
   };
 
   const onSubmit = () => {
@@ -52,6 +48,7 @@ export default function GoToDialog(props) {
     event.preventDefault();
 
     calContext.calendar.update(parseInt(year), parseInt(month),  true, finishedLoading);
+    onClose();
   };
 
   const handleYearBlur = (event) => {
@@ -90,7 +87,7 @@ export default function GoToDialog(props) {
         vertical: 'bottom',
         horizontal: 'left',
       }}
-      onClose={onCloseClick} 
+      onClose={onClose} 
       open={open}
     >
       <Box sx={{padding: 2}}>
