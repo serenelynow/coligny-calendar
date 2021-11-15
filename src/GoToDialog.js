@@ -41,7 +41,8 @@ export default function GoToDialog(props) {
     onClose();
   };
 
-  const onGoToClick = () => {
+  const onSubmit = () => {
+    
     setCalContext(
       calContext => (
         { ...calContext, isLoaded:false }
@@ -71,6 +72,13 @@ export default function GoToDialog(props) {
     }
   };
 
+  const onKeyPress = (event) => {
+      if (event.key === 'Enter') {
+        var yearInput = document.forms.goToForm.year;
+        yearInput.blur();
+      }  
+  };
+
   const handleMonthChange = (event) => {
     setMonth(event.target.value);
   };
@@ -88,9 +96,10 @@ export default function GoToDialog(props) {
       <Box sx={{padding: 2}}>
         <Typography variant="h6" sx={{marginBottom: 2}}>{l10n.goto}</Typography>
         <form
+          name="goToForm"
           component="form"
           sx={{'& > :not(style)': { m: 1 }}}
-          onSubmit={onGoToClick}
+          onSubmit={onSubmit}
         >
           <Box 
             sx={{
@@ -103,6 +112,7 @@ export default function GoToDialog(props) {
               error={year == undefined || year == ''}
               required
               autoFocus
+              name="year"
               label={l10n.year}
               type="number"
               InputLabelProps={{
@@ -110,6 +120,7 @@ export default function GoToDialog(props) {
               }}
               defaultValue={year}
               onBlur={handleYearBlur}
+              onKeyPress={onKeyPress}
               onFocus={event => {
                 event.target.select()}}
               sx={{display: 'block', marginBottom: 3}}
