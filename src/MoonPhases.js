@@ -20,7 +20,17 @@ function loadMoonPhases(otherData, params,callback){
         var url = "https://www.icalendar37.net/lunar/api/?" + gets.join("&")
         xmlhttp.onreadystatechange = function() {
             if (xmlhttp.readyState == 4 && xmlhttp.status == 200) {
-                loadNewPhases(otherData, JSON.parse(xmlhttp.responseText), callback)
+                var json;
+                try {
+                     json = JSON.parse(xmlhttp.responseText)
+                } catch (e) {
+                    console.warn('An unexpected response occurred retrieving the moonPhases.');
+                    console.warn('responseText: ' + xmlhttp.responseText);
+                } 
+                finally {
+                    loadNewPhases(otherData, json, callback);
+                }
+                
             }
         }
         xmlhttp.open("GET", url, true)
@@ -28,23 +38,32 @@ function loadMoonPhases(otherData, params,callback){
     }
 }
 
-function loadNewPhases(otherData, moon, callback){     
-    var phMax = [];
-    var year = moon.year.toString();
-    var month = moon.month.toString()
-    if (moonPhases[otherData.cYear] == undefined) {
-        moonPhases[otherData.cYear] = {};
-    }
+function loadNewPhases(otherData, moon, callback){  
 
-    moonPhases[otherData.cYear][otherData.cMonth] = {};
-    
-    for (var nDay in moon.phase){
-        if (moon.phase[nDay].isPhaseLimit){
-            
-            moonPhases[otherData.cYear][otherData.cMonth][nDay.toString()] = moon.phase[nDay].svgMini;
+    var moonPhase;
+    if (moon != undefined) {
+        var year = moon.year.toString();
+        var month = moon.month.toString()
+        if (moonPhases[otherData.cYear] == undefined) {
+            moonPhases[otherData.cYear] = {};
         }
+
+        moonPhases[otherData.cYear][otherData.cMonth] = {};
+        
+        for (var nDay in moon.phase){
+            if (moon.phase[nDay].isPhaseLimit){
+                
+                moonPhases[otherData.cYear][otherData.cMonth][nDay.toString()] = moon.phase[nDay].svgMini;
+            }
+        }
+
+        moonPhase = moonPhases[otherData.cYear][otherData.cMonth];
+
+    } else {
+        moonPhase = [];
     }
-    callback(moonPhases[otherData.cYear][otherData.cMonth]);
+    
+    callback(moonPhase);
 }   
 
 export function getMoonPhases(moonPhaseData, callback) {
