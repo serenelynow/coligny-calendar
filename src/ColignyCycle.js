@@ -323,7 +323,7 @@ export function getCyclesCompleted(year) {
         // get the full cycles completed
         cyclesCompleted.full = Math.floor( absYear / fullCycleTotals.years );
         cyclesCompleted.days += (cyclesCompleted.full * fullCycleTotals.days);
-        cyclesCompleted.year += (cyclesCompleted.full * fullCycleTotals.years);
+        cyclesCompleted.years += (cyclesCompleted.full * fullCycleTotals.years);
 
         yearsLeft = absYear % fullCycleTotals.years;
 
