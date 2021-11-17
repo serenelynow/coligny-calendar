@@ -1,6 +1,6 @@
 # coligny-calendar
 This calendar is developed based on the research of [Helen McKay](https://www.academia.edu/35143200/THE_COLIGNY_CALENDAR_AS_A_METONIC_LUNAR_CALENDAR).  It currently follows a purely Metonic cycle but we are investigating where days need to be removed to address the fact that our time periods aren't always perfect integers (e.g., days aren't perfectly 24 hours).  Identifying these days and removing a day from Equos will ensure the month stay in the season they were intended and keep the full moon on the days of the month (days 7-9) they are expected to be on.
 
-The latest version can currently be found in the [v1 branch](https://github.com/serenelynow/coligny-calendar/tree/v1/) as it is currently being developed.  If you'd like to download a version to use locally, you can download the latest version in the [dist folder of the v1 branch](https://github.com/serenelynow/coligny-calendar/tree/v1/dist).  Just download and unzip the file and open the index.html in your browser.
+The latest version can currently be found in the [v1 branch](https://github.com/serenelynow/coligny-calendar/tree/v1/) as it is currently being developed.  If you'd like to download a version to use locally, you can download the latest zip file in the [dist folder of the v1 branch](https://github.com/serenelynow/coligny-calendar/tree/v1/dist).  Just download and unzip the file and open the index.html in your browser.
 
 This calendar is being developed on behalf of [Bessus Nouiogalation](https://nouiogalatis.org/).
