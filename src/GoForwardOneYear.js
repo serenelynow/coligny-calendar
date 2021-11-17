@@ -29,8 +29,10 @@ export default function GoForwardOneYear() {
         // if we currently in an intercalary month
         // then we will go to the month afterwards
         while (yearCycle[month] == undefined) {
-            if (m == yearCycle.length){
+            if (month == yearCycle.length){
                 
+                // we have come to the end of the year
+                // so got to the next year and get the first month
                 year++;
                 yearCycle = ColignyCycle.getYearFromCycle(year);
                 month = 0;
