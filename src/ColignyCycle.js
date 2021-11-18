@@ -106,6 +106,7 @@ function calculateFullCycleTotals () {
     // };
 
     var fullCycleDays, fullCycleYears, driftCycleDays, driftCycleYears, metonicDays, metonicYears, yearDays;
+    var driftCycle, metonicCycle, yearCycle;
 
     // initialize the object that will store the totals
     var fullCycleTotals = {
@@ -133,7 +134,8 @@ function calculateFullCycleTotals () {
         driftCycleYears = 0;
         driftCycleDays = 0;
 
-        for (var m = 0; m < fullCycle[d].length; m++) {
+        driftCycle = fullCycle[d];
+        for (var m = 0; m < driftCycle.length; m++) {
             // looping through metonic cycles in the drift cycles
             
             // initialize the object for this metonic cycle
@@ -147,7 +149,8 @@ function calculateFullCycleTotals () {
             metonicYears = 0;
             metonicDays = 0;
 
-            for (var y = 0; y < fullCycle[d][m].length; y++) {
+            metonicCycle = driftCycle[m];
+            for (var y = 0; y < metonicCycle.length; y++) {
                 // looping through years in the metonic ycles
                 // point to months?
 
@@ -161,14 +164,15 @@ function calculateFullCycleTotals () {
                 //  initialize the counters for the year
                 yearDays = 0;
 
+                yearCycle = metonicCycle[y];
                 // loop through the months to get the days in the year
-                for (var month = 0; month < fullCycle[d][m][y].length; month++) {
-                    yearDays += (fullCycle[d][m][y][month] || 0);
+                for (var month = 0; month < yearCycle.length; month++) {
+                    yearDays += (yearCycle[month] || 0);
                 }
 
                 // set the days for the year
                 fullCycleTotals.cycles[d].cycles[m].cycles[y].days = yearDays;
-                fullCycleTotals.cycles[d].cycles[m].cycles[y].cycles = fullCycle[d][m][y];
+                fullCycleTotals.cycles[d].cycles[m].cycles[y].cycles = yearCycle;
 
 
                 // increment counters for the metonic cycle
@@ -179,7 +183,6 @@ function calculateFullCycleTotals () {
             // set the days and years for the metonic cycle
             fullCycleTotals.cycles[d].cycles[m].years = metonicYears;
             fullCycleTotals.cycles[d].cycles[m].days = metonicDays;
-            // fullCycleTotals.cycles[d].cycles[m].cycles = fullCycle[d][;
 
 
             driftCycleYears += metonicYears;
