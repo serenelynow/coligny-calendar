@@ -9,7 +9,8 @@ const startOfDayHour = -18;
 const colignyMonths = [ 
     "Quimonios", "Samonios", "Dumanios", "Riuros", "Anagantios", "Orgronios", "Cutios", "Rantaranos", "Giamonios", "Simiuisonna", "Equos", "Elembi", "Aedrinni", "Cantlos"
 ]; // 14 months
-// const equos = 10;
+const equos = 10;
+const intercalary2 = 7;
 
 // start constructiong the full cycle
 var metonicCycle = [
@@ -35,35 +36,36 @@ var metonicCycle = [
     [null,30,29,30,29,30,30,null,29,30,30,29,30,29]
 ]; // 19 years in a Metonic cycle
 
-var driftCycle = []; // 228 years in a drifty cycle
+// drift cycle corrects the moon drift
+// 228 years in this drift cycle
+var driftCycle = []; 
 var m, d;
-for (m = 0; m < 12; m++) {
-// for (m = 0; m < 11; m++) {
+for (m = 0; m < 11; m++) {
     driftCycle[m] = metonicCycle;       
 }
 
-// removing a day from the Equos month in the last year
-// of the last metonic cycle in a drift cycle
-// (12 metonic cycles in a drift cycle)
-// this will remove 28 days from the full cycle
-// var metonicOneLessDay = JSON.parse(JSON.stringify(metonicCycle));
-// metonicOneLessDay[18][equos] = 29;
-// driftCycle[m] = metonicOneLessDay;
+var metonicOneLessDay = JSON.parse(JSON.stringify(metonicCycle));
+metonicOneLessDay[metonicCycle.length - 1][equos] = 29;
 
-var fullCycle = []; // 6384 years in the larger drift cycle
+// removing a day every 3 metonic cycles (57 years)
+driftCycle[2] = metonicOneLessDay;
+driftCycle[5] = metonicOneLessDay;
+driftCycle[8] = metonicOneLessDay;
+driftCycle[m] = metonicOneLessDay;
+
+// full cycle corrects the sun/seasonal drift
+// 6612 years in the full cycle
+var fullCycle = []; 
 for (d = 0; d < 28; d++) {
-// for (d = 0; d < 27; d++) {
-    fullCycle[d] = driftCycle;
+    // removing a day from Equos 
+    // of the 10th (index of 9) year 
+    // of the last metonic cycle
+    // of the last drift cycle (d index of 27) of the full cycle
+    // this will remove 1 month from the full cycle
+    var driftOneLessDay = JSON.parse(JSON.stringify(driftCycle));
+    driftOneLessDay[m-1][9][equos] = 29;
+    fullCycle[d] = driftOneLessDay;
 }
-
-// removing a day from Equos 
-// of the 10th (index of 9) year 
-// of the 6th (index of 5) metonic cycle
-// of the last drift cycle (index of 27) of the full cycle
-// this will remove 1 day from the full cyle
-// var driftOneLessDay = JSON.parse(JSON.stringify(driftCycle));
-// driftOneLessDay[5][9][equos] = 29
-// fullCycle[d] = driftOneLessDay;
 
 // end of constructing the drift cycle.
 // 29 days have been removed in the end.
