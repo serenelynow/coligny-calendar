@@ -10,10 +10,10 @@ const colignyMonths = [
     "Quimonios", "Samonios", "Dumanios", "Riuros", "Anagantios", "Orgronios", "Cutios", "Rantaranos", "Giamonios", "Simiuisonna", "Equos", "Elembi", "Aedrinni", "Cantlos"
 ]; // 14 months
 const equos = 10;
-const intercalary2 = 7;
+// const intercalary2 = 7;
 
 // start constructiong the full cycle
-var metonicCycle = [
+const metonicCycle = [
     [29,30,29,30,29,30,30,null,29,30,30,29,30,29],
     [null,30,29,30,29,30,30,null,29,30,29,29,30,29],
     [null,30,29,30,29,30,30,30,29,30,29,29,30,29],
@@ -36,227 +36,583 @@ var metonicCycle = [
     [null,30,29,30,29,30,30,null,29,30,30,29,30,29]
 ]; // 19 years in a Metonic cycle
 
-// drift cycle corrects the moon drift
-// 228 years in this drift cycle
-var driftCycle = []; 
-var m, d;
-for (m = 0; m < 11; m++) {
-    driftCycle[m] = metonicCycle;       
+const lunarDriftCycleYears = 61;
+// const solarDriftCycleYears = 219;
+
+function calculateDaysInMetonicYears() {
+    var eachYear = [];
+    for (var y = 0; y < metonicCycle.length; y++) {
+        var yearDays = 0;
+        for (var m = 0; m < metonicCycle[y].length; m++) {
+            yearDays += (metonicCycle[y][m] || 0);
+        }
+        eachYear[y] = yearDays;
+    }
+
+    return eachYear;
+}
+var daysInMetonicYears = calculateDaysInMetonicYears();
+
+function calculateDaysInFullMetonicCycle () {
+    var days = 0;
+
+    for (var y = 0; y < metonicCycle.length; y++) {
+        days += daysInMetonicYears[y];
+    }
+
+    return days;
+
+}
+const daysInMetonicCycle = calculateDaysInFullMetonicCycle();
+
+function getDaysInMetonicCycle(isBeforeBase, startYear, endYear) {
+    var metonicDays = 0;
+
+    // this alows us to get the days left in a cycle if needed
+    if (startYear == undefined) {
+        startYear = 0;
+    }
+
+    if (endYear == undefined) {
+        endYear = metonicCycle.length;
+    }
+
+    if (Math.abs(endYear - startYear) == metonicCycle.length) {
+        // a full cycle is being requested
+        metonicDays = daysInMetonicCycle;
+    } else {
+        // a partial cycle is being requested
+        if (isBeforeBase == undefined) {
+            isBeforeBase = false;
+        }
+
+        var increment, compareFn, initial, end;
+        if (isBeforeBase) {
+            increment = -1
+            compareFn = greaterThan;
+
+        } else {
+            increment = 1;
+            compareFn = lessThan;
+        }
+
+        initial = startYear;
+        end = endYear;
+
+        for (var y = initial; compareFn(y, end); y += increment) {
+            metonicDays += daysInMetonicYears[y];
+        }
+    }
+
+    return metonicDays;
 }
 
-var metonicOneLessDay = JSON.parse(JSON.stringify(metonicCycle));
-metonicOneLessDay[metonicCycle.length - 1][equos] = 29;
+function getDaysInLunarCycle(isBeforeBase, yearInMetonic, startYear, endYear) {
 
-// removing a day every 3 metonic cycles (57 years)
-driftCycle[2] = metonicOneLessDay;
-driftCycle[5] = metonicOneLessDay;
-driftCycle[8] = metonicOneLessDay;
-driftCycle[m] = metonicOneLessDay;
+    if (isBeforeBase == undefined) {
+        isBeforeBase = false;
+    }
 
-// full cycle corrects the sun/seasonal drift
-// 6612 years in the full cycle
-var fullCycle = []; 
-for (d = 0; d < 28; d++) {
-    // removing a day from Equos 
-    // of the 10th (index of 9) year 
-    // of the last metonic cycle
-    // of the last drift cycle (d index of 27) of the full cycle
-    // this will remove 1 month from the full cycle
-    var driftOneLessDay = JSON.parse(JSON.stringify(driftCycle));
-    driftOneLessDay[m-1][9][equos] = 29;
-    fullCycle[d] = driftOneLessDay;
+    if (yearInMetonic == undefined) {
+        yearInMetonic = 0;
+    }
+    
+    if (startYear == undefined) {
+        startYear = 0;
+    }
+
+    if (endYear == undefined) {
+        endYear = lunarDriftCycleYears
+    }
+
+    var lunarDays = 0;
+    var yearsLeft = Math.abs(endYear - startYear); 
+
+    var increment,compareFn;
+    var mStart, mEnd;
+    var yStart, yEnd;
+    var lunarEnd;
+
+    if (isBeforeBase) {
+        increment = -1;
+        compareFn = greaterThan;
+        mStart = metonicCycle.length - 1;
+        mEnd = -1;
+        lunarEnd = -1;
+
+    } else {
+        increment = 1;
+        compareFn = lessThan;
+        mStart = 0;
+        mEnd = metonicCycle.length; 
+        lunarEnd = lunarDriftCycleYears;      
+    }
+
+    // first we are going to get days to finish out the metonic cycle
+    if (yearInMetonic != mStart) {
+        // get days for the rest of this metonic cycle
+
+        var endMetonicYear = (Math.abs(mEnd - yearInMetonic) <= yearsLeft) ? mEnd : yearInMetonic + (increment * yearsLeft);
+
+        // update variable for the rest of the calculations
+        lunarDays += getDaysInMetonicCycle(isBeforeBase, yearInMetonic, endMetonicYear);
+        yearsLeft -= Math.abs(endMetonicYear - yearInMetonic);
+        yearInMetonic = mStart;
+    }
+
+    // now we are at the start of a lunar cycle and we can see how many full lunar cycles are left for easy math
+    var metonicCyclesInLunarDriftCyle = Math.floor(yearsLeft/metonicCycle.length);
+    lunarDays += (daysInMetonicCycle * metonicCyclesInLunarDriftCyle); 
+    yearsLeft -= (metonicCyclesInLunarDriftCyle * metonicCycle.length);
+
+    if (isBeforeBase) {
+        yStart = metonicCycle.length - 1;
+        yEnd = (metonicCycle.length - 1) - yearsLeft;
+    } else {
+        yStart = yearInMetonic;
+        yEnd = yearsLeft;
+    }
+    
+    // get get the days for the remaining years not in a complete metonic cycle
+    for (var y = yStart; compareFn(y, yEnd); y += increment) {
+        lunarDays += daysInMetonicYears[y];
+    }
+
+    // we reached the end so now remove the day that handles the drift
+    if (endYear == lunarEnd) {
+        lunarDays -= 1;
+    }
+    
+    return lunarDays;
+};
+
+// function getDaysInSolarCycle(yearInMetonic, yearInLunar, startYear, endYear) {
+//     // arguments are what year in those cycles are we starting
+
+//     if (yearInMetonic == undefined) {
+//         yearInMetonic = 0;
+//     }
+
+//     if (yearInLunar == undefined) {
+//         yearInMetonic = 0;
+//     }
+
+//     if (startYear == undefined) {
+//         startYear = 0;
+//     }
+
+//     if (endYear == undefined) {
+//         endYear = lunarDriftCycleYears;
+//     }
+
+//     var solarDays = 0
+
+//     while (startYear < endYear) {
+    
+//         var yearsLeft = endYear - startYear;
+//         // calculate if this is a complete lunar cycle or not
+//         var lunarEndYear = (yearsLeft >= lunarDriftCycleYears) ? lunarDriftCycleYears : yearInLunar + yearsLeft;
+
+//         // get the days of this lunar cycle that starts the solar cycle
+//         // this may be an incomplete lunar cycle
+//         solarDays += getDaysInLunarCycle(yearInMetonic, yearInLunar, lunarEndYear);
+
+//         // now we need to update where we are in the cycles and see if we need to keep going
+//         var yearsAdvanced = lunarEndYear - yearInLunar;
+//         startYear += yearsAdvanced;
+//         // yearInMetonic = startYear % metonicCycle.length;
+//         yearInMetonic = startYear % metonicCycle.length - 1;
+
+//         if (yearInMetonic == -1)  {
+//             yearInMetonic = metonicCycle.length - 1;
+//         }
+//         yearInLunar = 0; // we just calculated the incomplete lunar cycle so we are at the beginning of the next
+        
+//     }
+
+//     // now that we've completed a cycle, we need to remove a day from it's length
+//     // this however isn't checking if there is an Equos to remove from
+//     // it just assumes to do one.
+//     if (endYear == solarDriftCycleYears) {
+//         --solarDays;
+//     }
+    
+//     return solarDays;
+
+// }
+
+
+export function calculateDaysSinceColBase (year, month, day) {
+
+    var daysSinceColBase = 0;
+    var isBefore = !(baseColignyDate.equals(year, month, day) || baseColignyDate.isBefore(year, month, day));
+
+    // if this date equals baseColignDate, no need to do any further calculations
+    if (!(baseColignyDate.equals(year, month, day))) {
+
+        var yearDiff = Math.abs(year - baseColignyDate.getYear());
+        var countingYears = 0;
+
+        var increment, comparisonFn, compareFnRtArg;
+        var s, sStart, sEnd;
+        var l, lStart, lEnd;
+        var m, mStart, mEnd;
+        var y = 0;
+        var mo, monthDays, monthInitial, monthFnRtArg, daysInMonth;
+
+        var isBefore = !(baseColignyDate.isBefore(year, month, day));
+        if (isBefore) {
+            // this is for counting backwards
+            increment = -1;
+            comparisonFn = greaterThan;
+            compareFnRtArg = yearDiff;
+
+            // sStart = solarDriftCycleYears - 1;
+            // sEnd = -1;
+
+            l = lunarDriftCycleYears - 1;
+            lStart = l;
+            lEnd = -1
+
+            m = metonicCycle.length - 1;
+            mStart = m;
+            mEnd = -1;
+
+        } else {
+            // this is for counting forward
+            increment = 1;
+            comparisonFn = lessThan;
+            compareFnRtArg = yearDiff + 1;
+
+            // s = 0;
+            // sStart = 0;
+            // sEnd = solarDriftCycleYears;
+
+            l = 0;
+            lStart = l;
+            lEnd = lunarDriftCycleYears;
+
+            m = 0;
+            mStart = m;
+            mEnd = metonicCycle.length;
+
+        }
+
+        // iterate through completed solar cycles
+        // while (comparisonFn(countingYears + (increment * solarDriftCycleYears), compareFnRtArg)) {
+        //     daysSinceColBase += getDaysInSolarCycle(m, l, sStart, sEnd );
+        //     countingYears += (increment * Math.abs(sEnd - sStart));
+        //     if (isBefore) {
+
+        //     } else {
+        //         sStart = 0;
+        //     }
+            
+        //     // update metonic and lunar yearInCycle arguments           
+        //     m = countingYears % metonicCycle.length;
+        //     m = mStart + (increment * m);
+
+        //     l = countingYears % lunarDriftCycleYears;
+        //     l = lStart + (increment * l);
+        // }
+        // lStart = l;
+
+        // iterate through completed lunar cycles
+        while ((countingYears + Math.abs(lEnd - lStart)) < compareFnRtArg) {
+            countingYears += Math.abs(lEnd - lStart);
+
+            daysSinceColBase += getDaysInLunarCycle(isBefore, m, lStart, lEnd);
+            if (isBefore) {
+                lStart = lunarDriftCycleYears - 1;
+            } else {
+                lStart = 0;
+            }
+            
+            // update metonic and lunar yearInCycle arguments           
+            m = countingYears % metonicCycle.length;
+            m = mStart + (increment * m);
+        }
+
+        mStart = m;
+       
+        // iterate through completed metonic cycles
+        while ((countingYears + Math.abs(mEnd - mStart)) < compareFnRtArg) {
+            // the first iteration may not be a full cycle 
+            // but could be mid metonic cycle and will complete it
+
+            countingYears += Math.abs(mEnd - mStart);
+            daysSinceColBase += getDaysInMetonicCycle(isBefore, mStart, mEnd);
+
+            if (isBefore) {
+                mStart = metonicCycle.length - 1;
+            } else {
+                mStart = 0;
+            }        
+        }
+
+        // iterated completed years
+        while ((countingYears + 1) < compareFnRtArg) {
+            countingYears++;
+            daysSinceColBase += daysInMetonicYears[mStart];
+            mStart += increment;
+        }
+
+        // iterated completed months
+        var yearCycle = metonicCycle[mStart];
+        if (isBefore) {
+            monthInitial = yearCycle.length - 1;
+            monthFnRtArg = month;
+        } else {
+            monthInitial = 0;
+            monthFnRtArg = month;
+        }
+        
+        for (mo = monthInitial; comparisonFn(mo, monthFnRtArg); mo += increment) {
+            monthDays = (yearCycle[mo] || 0);
+            daysSinceColBase += monthDays;
+        }
+
+        // get the day of month
+        if (isBefore) {
+            monthDays = yearCycle[mo];
+            daysSinceColBase += monthDays - day + 1;
+            daysSinceColBase *= -1; // make it negative since it's before
+        } else {
+            daysSinceColBase += (day - baseColignyDate.getDate());        
+        }
+
+        // determine if we are close to but not at the end of the lunar cycle 
+        // and we need to remove a day for Equos in the last years of the lunar cycle
+
+        var yLunar = Math.abs(yearDiff) % lunarDriftCycleYears; 
+        yLunar = isBefore ? (lunarDriftCycleYears - yLunar): yLunar; // years into lunar drift cycle
+        var untilLunarEnd = lunarDriftCycleYears - yLunar - 1;
+        const yearsFromEndToFindEquos = 4;
+
+
+        if (( (isBefore == false ) && (untilLunarEnd <= yearsFromEndToFindEquos) )
+            || (isBefore == true) ) { 
+            // we are in the last years of the lunar drift cycle
+            // and we need to check if we are upon or it has yet to come 
+            // to the last 30 day Equos of the lunar cycle and remove a day
+
+            var foundLastEquos = false;
+
+            // we will not check the current year now so e > 0
+            for (var e = untilLunarEnd; e > 0; e--) {
+                foundLastEquos = getDaysInMonth(year + e, equos) == 30;
+                if (foundLastEquos) {
+                    break;
+                }
+            }
+
+            if (foundLastEquos && (isBefore == true )) {
+                // we are going backwards and we've already passed Equos 
+                // so we need to remove a day
+                daysSinceColBase += increment * -1;
+
+            } else if (!foundLastEquos) {   
+                // if we didn't find equos after the current year 
+                // then it's already happened and we need to take a day out for it
+                if (getDaysInMonth(year, equos) == 30) {
+                    // it is a year with a 30-day Equos
+                    if ((isBefore == false && month >= equos) 
+                        || (isBefore == true && month <= equos) ) {
+                        // we are in the month of Equos or past it for the year
+                        daysSinceColBase += increment * -1;
+                    }
+                } else if (isBefore == false) {
+                    // as Equos was not found after the current year 
+                    // and the current year does not have an Equos
+                    // we are going to assume that we have already passed the year
+                    // if we are going forward
+                    daysSinceColBase += increment * -1;
+                }
+            }   
+        }
+    }
+
+    return daysSinceColBase;
 }
 
-// end of constructing the drift cycle.
-// 29 days have been removed in the end.
+function isYearToShortenEquos(year) {
+    var yearDiff = year - baseColignyDate.getYear();
+    var isBefore = yearDiff < 0;
+    var yLunar = Math.abs(yearDiff) % lunarDriftCycleYears; 
+    yLunar = isBefore ? (lunarDriftCycleYears - yLunar): yLunar; // years into lunar drift cycle
+    var untilLunarEnd = lunarDriftCycleYears - yLunar - 1;
+    const yearsToFindEquos = 4;
+    var isYearToShortenEquos = false;
+    if (untilLunarEnd <= yearsToFindEquos ) {
+        // we need to check if we are upon or it has yet to come the last 30 day Equos of the lunar cycle and remove a day
+        
+        for (var e = untilLunarEnd; e > -1; e--) {
+            isYearToShortenEquos = getDaysInMonth(year + e, equos) == 30;
+            if (isYearToShortenEquos) {
+                break;
+            }
+        }
+        isYearToShortenEquos = (e == 0);
+    }
 
-/* EQUOS 5013 IN COLIGNY APP HAS 29 DAYS BUT I HAVE 30 */
+    return isYearToShortenEquos;
+}
+
+
+
+export function calculateDate(daysFromBase) {
+    // assuming the baseColignyDate is the start of a Metonic cycle
+    // and we are calculating the lunar and solar cycles starting from there also
+
+    // we just want to make sure we are only dealing with integers
+    daysFromBase = Math.floor(daysFromBase);
+
+    // figure out if this is a date before or after our base date
+    // and then get the absolute value
+    var isBefore = (daysFromBase/Math.abs(daysFromBase)) == -1;
+    daysFromBase = Math.abs(daysFromBase);
+
+    var countingTo = 0;
+    var years = 0;
+
+    var y, m, d;
+    var yearInMetonic, yearInLunar;
+    var increment, comparisonFn, compareFnRightArg;
+
+    if (isBefore) {
+        // this is for counting backwards
+        increment = -1;
+        comparisonFn = greaterThan;
+
+        y = metonicCycle.length;
+
+        countingTo = daysFromBase - 1;
+        compareFnRightArg = -1;
+
+    } else {
+        // this is for counting foward
+        increment = 1;
+        comparisonFn = lessThan;
+
+        y = 0;
+        m = 0;
+        d = 0;
+
+        yearInMetonic = 0;
+        yearInLunar = 0;
+
+        countingTo = 0;
+        compareFnRightArg = daysFromBase;
+    }
+
+    // var daysInSolarCycle = getDaysInSolarCycle();
+    // while (comparisonFn((countingTo + (increment * daysInSolarCycle)), compareFnRightArg)) {
+    //     // we got a full solar drift cycle so add the years up
+    //     years += solarDriftCycleYears;
+
+    //     // now we need to advance the countingTo
+    //     countingTo += (increment * daysInSolarCycle);
+
+    //     // now we get the days in the next solar cycle
+    //     // we have to update the yearIn for each cycle type
+
+    //     yearInMetonic = years % metonicCycle.length;
+    //     yearInLunar = years % lunarDriftCycleYears;
+    //     daysInSolarCycle = getDaysInSolarCycle(yearInMetonic, yearInLunar);
+    // }
+
+    // add days through completed lunar cycles and count years
+    var daysInLunarCycle = getDaysInLunarCycle(yearInMetonic, yearInLunar);
+    while (comparisonFn((countingTo + (increment * daysInLunarCycle)), compareFnRightArg)) {
+        // loop through through lunar cycles
+        
+        years += (lunarDriftCycleYears - yearInLunar);
+
+        // now we need to advance the countingTo
+        countingTo += (increment * daysInLunarCycle);
+
+        // now we get the days in the next solar cycle
+        // we have to update the yearIn for each cycle type
+        yearInMetonic = years % metonicCycle.length;
+        yearInLunar = 0;
+        daysInLunarCycle = getDaysInLunarCycle(isBefore, yearInMetonic, yearInLunar);
+    } 
+
+    // add days from completed metonic cycles and count years
+    var metonicDays = getDaysInMetonicCycle(isBefore, yearInMetonic);
+    while (comparisonFn((countingTo + (increment * metonicDays)), compareFnRightArg)) {
+        // we got metonic cycles to go through
+        countingTo += (increment * metonicDays);
+        years += metonicCycle.length;
+
+        // after the first iteration, all cycles will be full cycles
+        metonicDays = daysInMetonicCycle;
+    } 
+
+    // add days from completed years and count years
+    y = years % metonicCycle.length;
+    while (comparisonFn((countingTo + (increment * daysInMetonicYears[y])), compareFnRightArg)) {
+        // we are in the last metonic cycle and need to identify specific year
+        countingTo += (increment * daysInMetonicYears[y]);
+        years += increment;
+        y = years % metonicCycle.length;
+    } 
+
+    // add completed month days
+    while (comparisonFn((countingTo + (increment * metonicCycle[y][m])), compareFnRightArg)) {
+        // we are in the actual year so identify the month
+        countingTo += (increment * metonicCycle[y][m]);
+        m += increment;
+    } 
+
+    // we are in the month so get the day
+    d = Math.abs(compareFnRightArg - countingTo); // this may need a isBefore check
+    countingTo += (increment * d);  
+
+    // get the gregorian date equivalent and day of week
+    var newGDate = new Date(baseGregorianDate.getTime());
+    newGDate.setDate(newGDate.getDate() + daysFromBase);
+    var dayOfWeek = newGDate.getDay();
+
+    var newDate = {
+        year: baseColignyDate.getYear() + (increment * years),
+        month: baseColignyDate.getMonth() + (increment * m),
+        date: baseColignyDate.getDate() + (increment * d),
+        day: dayOfWeek,
+        gDate: newGDate
+    };
+
+    return newDate;
+}
+
 
 export function getStartOfDayHour() {
     return startOfDayHour;
 }
 
-function calculateFullCycleTotals () {
-    // fullCycleTotals = {
-    //     // first level is the larger cycle
-    //     days: 0, 
-    //     years: 0,
-    //     cycles: [
-    //         {
-    //             // this level is the drift cycle
-    //             days: 0,
-    //             years: 0,
-    //             cycles: [
-    //                 {
-    //                     // this level is the metonic cycle
-    //                     days: 0,
-    //                     years: 0,
-    //                     cycles [
-    //                         {
-    //                             // this level are individual years
-    //                             days: 0,
-    //                             cycles: [
-    //                                 // this level are individual months and are just numbers and not objects
-    //                                 /// could just point to/reference year in metonic cyle fullCycle[d][m]
-    //                             ]
-    //                         }
-    //                     ]
-    //                 }
-    //             ]
-    //         }
-    //     ]
-    // };
+function getObject(year, month) {
 
-    var fullCycleDays, fullCycleYears, driftCycleDays, driftCycleYears, metonicDays, metonicYears, yearDays;
-    var driftCycle, metonicCycle, yearCycle;
+    var diff = year - baseColignyDate.getYear();
 
-    // initialize the object that will store the totals
-    var fullCycleTotals = {
-        // first level is the larger cycle
-        days: 0, 
-        years: 0,
-        cycles: []
-    };
+    var yearInMetonic = Math.abs(diff) % metonicCycle.length;
 
-    // initilize the counters for this drift cycle
-    fullCycleDays = 0;
-    fullCycleYears = 0;
-
-    for (var d = 0; d < fullCycle.length; d++) {
-        // looping through drift cycles in the largerDriftCyle
-        
-        // initilize the object for this drift cycle
-        fullCycleTotals.cycles[d] = {
-            days: 0, 
-            years: 0,
-            cycles: []
-        };
-
-        // initilize the counters for this drift cycles
-        driftCycleYears = 0;
-        driftCycleDays = 0;
-
-        driftCycle = fullCycle[d];
-        for (var m = 0; m < driftCycle.length; m++) {
-            // looping through metonic cycles in the drift cycles
-            
-            // initialize the object for this metonic cycle
-            fullCycleTotals.cycles[d].cycles[m] = {
-                days: 0, 
-                years: 0,
-                cycles: []
-            };
-
-            // initialize the counters for this metonic cycle
-            metonicYears = 0;
-            metonicDays = 0;
-
-            metonicCycle = driftCycle[m];
-            for (var y = 0; y < metonicCycle.length; y++) {
-                // looping through years in the metonic ycles
-                // point to months?
-
-                // initilize the object for the year
-                // just use the array of month day totals for the cycle
-                fullCycleTotals.cycles[d].cycles[m].cycles[y] = {
-                    days: 0, 
-                    cycles: []
-                };
-
-                //  initialize the counters for the year
-                yearDays = 0;
-
-                yearCycle = metonicCycle[y];
-                // loop through the months to get the days in the year
-                for (var month = 0; month < yearCycle.length; month++) {
-                    yearDays += (yearCycle[month] || 0);
-                }
-
-                // set the days for the year
-                fullCycleTotals.cycles[d].cycles[m].cycles[y].days = yearDays;
-                fullCycleTotals.cycles[d].cycles[m].cycles[y].cycles = yearCycle;
-
-
-                // increment counters for the metonic cycle
-                metonicYears++;
-                metonicDays += yearDays;
-            }
-
-            // set the days and years for the metonic cycle
-            fullCycleTotals.cycles[d].cycles[m].years = metonicYears;
-            fullCycleTotals.cycles[d].cycles[m].days = metonicDays;
-
-
-            driftCycleYears += metonicYears;
-            driftCycleDays += metonicDays;
-        }
-
-        // set the days and years for the metonic cycle
-        fullCycleTotals.cycles[d].years = driftCycleYears;
-        fullCycleTotals.cycles[d].days = driftCycleDays;
-
-        // increment the counter for the larger drift cycle
-        fullCycleYears += driftCycleYears;
-        fullCycleDays += driftCycleDays;
+    if (diff < 0 && yearInMetonic != 0) {
+        yearInMetonic = metonicCycle.length - yearInMetonic;
     }
 
-    // set the days and years for the full cycle
-    fullCycleTotals.years = fullCycleYears;
-    fullCycleTotals.days = fullCycleDays;
-
-    return fullCycleTotals;
-};
-
-const fullCycleTotals = calculateFullCycleTotals();
-
-export function getYearFromCycle(year) {
-    var cyclesCompleted = getCyclesCompleted(year);
-    var d, m, y;
-    if (cyclesCompleted.isBeforeBaseDate == true) {
-
-        d = fullCycleTotals.cycles.length - (cyclesCompleted.drift + 1);
-        m = fullCycleTotals.cycles[d].cycles.length - (cyclesCompleted.metonic + 1);
-        y = fullCycleTotals.cycles[d].cycles[m].cycles.length - (cyclesCompleted.year + 1);
-
-
-    } else {
-        d = cyclesCompleted.drift;
-        m = cyclesCompleted.metonic;
-        y = cyclesCompleted.year;
-    }
-
-    var yearFromCycle = fullCycle[d][m][y];
-    return yearFromCycle;
-};
-
-function getObject(year, month){
-    // year could be an object from getCyclesCompleted
-
-    var cyclesCompleted = Number.isInteger(year) ? getCyclesCompleted(year) : year;
-    var d, m, y, returnObject;
-
-    if (cyclesCompleted.isBeforeBaseDate == true) {
-
-        d = fullCycleTotals.cycles.length - (cyclesCompleted.drift + 1);
-        m = fullCycleTotals.cycles[d].cycles.length - (cyclesCompleted.metonic + 1);
-        y = fullCycleTotals.cycles[d].cycles[m].cycles.length - (cyclesCompleted.year + 1);
-
-    } else {
-
-        d = cyclesCompleted.drift;
-        m = cyclesCompleted.metonic;
-        y = cyclesCompleted.year;
-
-    }
-
+    var object;
     if (month != undefined) {
-        returnObject = fullCycle[d][m][y][month];
+        object = metonicCycle[yearInMetonic][month];
     } else {
-         returnObject = fullCycle[d][m][y];
-
+        object = metonicCycle[yearInMetonic];
     }
 
-    return returnObject; // was subtracting 1 but took it out
+    return object;
+
+}
+
+export function getMetonicYear(year) {
+    return getObject(year);    
 }
 
 export function getMonthsInYear(year) {
@@ -275,138 +631,16 @@ export function getMonthsInYear(year) {
     return months;
 }
 
-export function getDaysInMonth(year, month) {
-    return getObject(year, month);
+export function getDaysInMonth(year, month, shortenEquos) {
+    var daysInMonth = getObject(year, month);
+
+    if (shortenEquos == true && month == equos & daysInMonth == 30 && isYearToShortenEquos(year)) {
+        daysInMonth--;
+        console.log('shortening equos');
+    }
+
+    return daysInMonth;
 }
-
-export function getCyclesCompleted(year) {
-    var cyclesCompleted = {
-        full: 0,
-        drift: 0,
-        metonic: 0,
-        year: 0,
-        years: 0,
-        days: 0,
-        isBeforeBaseDate: false
-    };
-
-    // get the difference in years to start
-    var yearsLeft = year - baseColignyDate.getYear(); 
-   
-    
-    if (yearsLeft != 0) {
-
-        var increment, comparisonFn;
-        var d, driftCycle, driftInitial, driftGreaterThan;
-        var m, metonicyCylc, metonicInitial, metonicGreaterThan;
-        var y, yearCycle, yearInitial, yearGreaterThan, monthsInYear;
-        var mo, monthCycle, monthInitial, monthGreaterThan, daysInMonth;
-
-        if (yearsLeft < 0) {
-            // we need to reduce the count and so since it's negative, this will be increasing it.
-            yearsLeft++; 
-            cyclesCompleted.isBeforeBaseDate = true;
-
-            // this is for counting backwards
-            increment = -1;
-            comparisonFn = greaterThan;
-
-            driftInitial = fullCycleTotals.cycles.length - 1;
-            driftGreaterThan = -1;
-        } else {
-
-            // this is for counting foward
-            increment = 1;
-            comparisonFn = lessThan;
-
-            driftInitial = 0;
-            driftGreaterThan = fullCycleTotals.cycles.length;
-        }
-
-        var absYear = Math.abs(yearsLeft); 
-
-        // get the full cycles completed
-        cyclesCompleted.full = Math.floor( absYear / fullCycleTotals.years );
-        cyclesCompleted.days += (cyclesCompleted.full * fullCycleTotals.days);
-        cyclesCompleted.years += (cyclesCompleted.full * fullCycleTotals.years);
-
-        yearsLeft = absYear % fullCycleTotals.years;
-
-
-        // var driftCycle, metonicCycle, yearCycle;
-        // get the drift cycles completed in current full cycle
-        for (d = driftInitial; comparisonFn(d, driftGreaterThan); d += increment) {
-
-            driftCycle = fullCycleTotals.cycles[d];
-
-            if ((yearsLeft - driftCycle.years) >= 0) {
-
-                cyclesCompleted.drift++;
-                cyclesCompleted.days += driftCycle.days;
-                cyclesCompleted.years += driftCycle.years;
-                yearsLeft -= driftCycle.years;
-
-            } else {
-
-                // done with the complete drift cycles
-                // now on to metonic cycles
-
-                if (cyclesCompleted.isBeforeBaseDate) {
-                    // this is for counting backwards
-                    metonicInitial = driftCycle.cycles.length - 1;
-                    metonicGreaterThan = -1;
-                } else {
-                    // this is for counting foward
-                    metonicInitial = 0;
-                    metonicGreaterThan = driftCycle.cycles.length;
-                }
-
-                // now loop through the metonic cycles
-                for (m = metonicInitial; comparisonFn(m, metonicGreaterThan); m += increment) {
-
-                    metonicCycle = driftCycle.cycles[m];
-
-                    if ((yearsLeft - metonicCycle.years) >= 0) {
-
-                        cyclesCompleted.metonic++;
-                        cyclesCompleted.days += metonicCycle.days;
-                        cyclesCompleted.years += metonicCycle.years;
-                        yearsLeft -= metonicCycle.years;
-
-                    } else {
-                        if (cyclesCompleted.isBeforeBaseDate) {
-                            // this is for counting backwards
-                            yearInitial = metonicCycle.cycles.length - 1;
-                            yearGreaterThan = -1;
-                        } else {
-                            // this is for counting foward
-                            yearInitial = 0;
-                            yearGreaterThan = metonicCycle.cycles.length;
-                        }
-
-                        for (y = yearInitial; comparisonFn(y, yearGreaterThan); y += increment) {
-                            yearCycle = metonicCycle.cycles[y];
-                            if ((yearsLeft - 1) >= 0) {
-
-                                cyclesCompleted.year++;
-                                cyclesCompleted.years++;
-                                cyclesCompleted.days += yearCycle.days;
-                                yearsLeft--;
-
-                            } else {
-                                break;
-                            }
-                        }
-                        break;
-                    }  
-                }
-                break;
-            }            
-        }    
-    } 
-
-    return cyclesCompleted;
-};
 
 export function getMonthName (monthIndex) {
     return colignyMonths[monthIndex];
@@ -419,240 +653,3 @@ function lessThan(left, right) {
 function greaterThan(left, right) {
     return left > right;
 }
-
-export function calculateDate (daysFromBase) {
-    // calcate date from days from base
-    // consider making a recursive method 
-
-    // if given daysFromBase, calculate date:
-    // 1) get fullCycles completed and add years
-    // 2) get driftCycles completed in current larger driftCycle and add years and keep track of # of driftcycles completed
-    // 3) get metonicycles completed in current driftCycle and add years and keep track of # of metoniccycles completed
-    // 4) get years completed in current metonic cycle and add years, set year and keep track of # of years completed in metonicy cycle
-    // 5) get each month completed in year cycle and set month and keep track of # of months completed
-    // 6) remaining days for are the date in month
-
-    var newDate = {
-        year: baseColignyDate.getYear(),
-        month: baseColignyDate.getMonth(),
-        date: baseColignyDate.getDate(),
-        day: undefined,
-        gDate: undefined
-    };
-    var daysLeft, drifyCycles, metonicCycles, years, months;
-    
-    // make sure it's just an integer first
-    daysFromBase = Math.floor(daysFromBase);
-
-    //calulate milliseconds to get Gregorian date and its day of week
-    // var time = baseGregorianDate.getTime() + (daysFromBase*milliFactor);
-    // newDate.gDate = new Date(time);
-    var newGDate = new Date(baseGregorianDate.getTime())
-    newGDate.setDate(newGDate.getDate() + daysFromBase);
-    newDate.gDate = newGDate;
-
-    var dayOfWeek = newDate.gDate.getDay();
-    newDate.day = dayOfWeek;
-
-    /* this will work going forward, but what about a date before? */
-
-    // 1) get fullCycles completed and add years
-
-    // do this so that we can subtract
-    var isBefore = (daysFromBase/Math.abs(daysFromBase)) == -1;
-    daysFromBase = Math.abs(daysFromBase);
-
-    var increment, comparisonFn;
-    var d, driftCycle, driftInitial, driftGreaterThan;
-    var m, metonicyCylc, metonicInitial, metonicGreaterThan;
-    var y, yearCycle, yearInitial, yearGreaterThan, monthsInYear;
-    var mo, monthCycle, monthInitial, monthGreaterThan, daysInMonth;
-
-    if (isBefore) {
-        // this is for counting backwards
-        increment = -1;
-        comparisonFn = greaterThan;
-
-        driftInitial = fullCycleTotals.cycles.length - 1;
-        driftGreaterThan = -1;
-
-    } else {
-        // this is for counting foward
-        increment = 1;
-        comparisonFn = lessThan;
-
-        driftInitial = 0;
-        driftGreaterThan = fullCycleTotals.cycles.length;
-    }
-
-    var fullCyclesCompleted = Math.floor(daysFromBase / fullCycleTotals.days);
-    newDate.year += (fullCyclesCompleted * fullCycleTotals.years * increment);
-    daysLeft = daysFromBase % fullCycleTotals.days;
-
-    // 2) get driftCycles completed in current larger driftCycle and add years and keep track of # of driftcycles completed
-    for (d = driftInitial; comparisonFn(d, driftGreaterThan); d += increment) {
-        
-        driftCycle = fullCycleTotals.cycles[d];
-        if (daysLeft >= driftCycle.days) {
-
-            // still finding completed drift cycles in the number of days
-            newDate.year += (driftCycle.years * increment);
-            daysLeft -= driftCycle.days;
-        
-        } else {
-
-            // reach all the completed drift cycles so calculate metonic cycles in the current drift cycles
-            // 3) get metonicycles completed in current driftCycle and add years and keep track of # of metoniccycles completed
-            
-            if (isBefore) {
-                // this is for counting backwards
-                metonicInitial = driftCycle.cycles.length - 1;
-                metonicGreaterThan = -1;
-            } else {
-                // this is for counting foward
-                metonicInitial = 0;
-                metonicGreaterThan = driftCycle.cycles.length;
-            }
-
-            for (m = metonicInitial; comparisonFn(m, metonicGreaterThan); m += increment) {
-
-                metonicCycle = driftCycle.cycles[m];
-                if (daysLeft >= metonicCycle.days) {
-                    // still finding completed metonic cycles in the number of days
-                    newDate.year += (metonicCycle.years * increment);
-                    daysLeft -= metonicCycle.days;
-                } else {
-
-                    // reach all the completed metonic cycles so calculate years in the current metonic cycles
-                    // 4) get years completed in current metonic cycle and add years, set year and keep track of # of years completed in metonicy cycle
-                    
-                    if (isBefore) {
-                        // this is for counting backwards
-                        yearInitial = metonicCycle.cycles.length - 1;
-                        yearGreaterThan = -1;
-                    } else {
-                        // this is for counting foward
-                        yearInitial = 0;
-                        yearGreaterThan = metonicCycle.cycles.length;
-                    }
-
-                    for (y = yearInitial; comparisonFn(y, yearGreaterThan); y += increment) {
-                        yearCycle = metonicCycle.cycles[y];
-                        monthsInYear = yearCycle.cycles.length;
-                        if (daysLeft >= yearCycle.days) {
-                            newDate.year += increment;
-                            daysLeft -= yearCycle.days;
-                        } else {
-                            // reach all the completed years so calculate months in the current year cycles
-                            // 5) get each month completed in year cycle and set month and keep track of # of months completed
-                            // some months have a null value because it's not in the cycle but we still want to count that month
-                            
-                            if (isBefore) {
-                                // this is for counting backwards
-                                monthInitial = yearCycle.cycles.length - 1;
-                                monthGreaterThan = -1;
-                            } else {
-                                // this is for counting foward
-                                monthInitial = 0;
-                                monthGreaterThan = yearCycle.cycles.length;
-                            }
-
-                            newDate.month = -1; // this should only be called once
-                            for (mo = monthInitial; comparisonFn(mo, monthGreaterThan); mo += increment) {
-                                monthCycle = yearCycle.cycles[mo];
-                                newDate.month += increment;
-                                if (monthCycle != undefined) {
-                                    // this is a month that is not skipped for this year
-
-                                    if (daysLeft >= monthCycle) {
-                                        daysLeft -= (monthCycle || 0);
-                                    } else {
-                                        // 6) remaining days for are the date in month
-                                        newDate.date += (daysLeft * increment);
-                                        daysInMonth = monthCycle;
-
-                                        // found all the months so get out of this loop
-                                        break;
-                                    }
-                                }
-                                
-                            }
-
-                            // now get out of this loop
-                            break;
-                        }
-                    }
-
-                    // now get out of this for loop
-                    break;
-                }
-            }
-
-            // now get out of this for loop
-            break;
-        }
-    } 
-
-    return newDate;
-};
-
-export function calculateDaysSinceColBase (year, month, day) {
-
-    var daysSinceColBase = 0;
-    var isBefore = !(baseColignyDate.equals(year, month, day) || baseColignyDate.isBefore(year, month, day));
-
-    var cyclesCompleted = getCyclesCompleted(year);
-    daysSinceColBase += cyclesCompleted.days;
-
-    var increment, comparisonFn;
-    var d, m, y;
-    var mo, monthCycle, monthInitial, monthGreaterThan, daysInMonth;
-
-    if (isBefore) {
-        // this is for counting backwards
-        increment = -1;
-        comparisonFn = greaterThan;
-
-        d = fullCycleTotals.cycles.length - (cyclesCompleted.drift + 1);
-        m = fullCycleTotals.cycles[d].cycles.length - (cyclesCompleted.metonic + 1);
-        y = fullCycleTotals.cycles[d].cycles[m].cycles.length - (cyclesCompleted.year + 1);
-
-    } else {
-        // this is for counting foward
-        increment = 1;
-        comparisonFn = lessThan;
-
-        d = cyclesCompleted.drift;
-        m = cyclesCompleted.metonic;
-        y = cyclesCompleted.year;
-    }
-
-    // this is wrong and pobably nees tha if statement above
-    var yearCycle = fullCycleTotals.cycles[d].cycles[m].cycles[y];
-
-    if (isBefore) {
-        monthInitial = yearCycle.cycles.length - 1;
-        monthGreaterThan = month;
-    } else {
-        // this could have been set up above but 
-        // I decided to keep it here so that it would 
-        // be easier to see what is going 
-        monthInitial = 0;
-        monthGreaterThan = month;
-    }
-
-    for (mo = monthInitial; comparisonFn(mo, monthGreaterThan); mo += increment) {
-        monthCycle = (yearCycle.cycles[mo] || 0);
-        daysSinceColBase += monthCycle;
-    }
-
-    if (isBefore) {
-        daysInMonth = yearCycle.cycles[mo]; // 3
-        daysSinceColBase += daysInMonth - day + 1;
-        daysSinceColBase *= -1;
-    } else {
-        daysSinceColBase += (day - baseColignyDate.getDate());        
-    }
-
-    return daysSinceColBase;
-};

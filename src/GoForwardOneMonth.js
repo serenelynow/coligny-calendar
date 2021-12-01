@@ -21,7 +21,7 @@ export default function GoForwardOneMonth() {
 
 	function getNextMonth(currentYear, currentMonth) {
 
-		var yearCycle = ColignyCycle.getYearFromCycle(currentYear);
+		var yearCycle = ColignyCycle.getMetonicYear(currentYear);
 		var month = currentMonth + 1;
 		var year, nextMonth;
 
@@ -31,7 +31,7 @@ export default function GoForwardOneMonth() {
 			year = currentYear + 1;
 
 			// adjust yearInCycle
-			yearCycle = ColignyCycle.getYearFromCycle(year);
+			yearCycle = ColignyCycle.getMetonicYear(year);
 
 			// set to first month of year;
 			month = 0;

@@ -24,7 +24,7 @@ export default function GoForwardOneYear() {
         // go forward one year
         var year = currentYear + 1; 
         var month = currentMonth;
-        var yearCycle = ColignyCycle.getYearFromCycle(year);
+        var yearCycle = ColignyCycle.getMetonicYear(year);
         
         // if we currently in an intercalary month
         // then we will go to the month afterwards
@@ -34,7 +34,7 @@ export default function GoForwardOneYear() {
                 // we have come to the end of the year
                 // so got to the next year and get the first month
                 year++;
-                yearCycle = ColignyCycle.getYearFromCycle(year);
+                yearCycle = ColignyCycle.getMetonicYear(year);
                 month = 0;
             } else {
                 month++; 

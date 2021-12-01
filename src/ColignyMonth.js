@@ -8,7 +8,6 @@ export default function ColignyMonth (year, month) {
   var startDay;
   var gStartDate;
   var rows;
-  var cyclesCompleted;
   var moonPhases = {};
   var callBack;
 
@@ -32,7 +31,6 @@ export default function ColignyMonth (year, month) {
     year = parseInt(newYear);
 
     if (year != undefined) {
-      cyclesCompleted = getCyclesCompleted(year);
       if (month != undefined) {
         this.calculateStartDay();
       }
@@ -133,7 +131,6 @@ export default function ColignyMonth (year, month) {
     startDay = null;
     gStartDate = null;
     rows = null;
-    cyclesCompleted = null;
     moonPhases = {};
     callBack = null;
   }
@@ -158,7 +155,7 @@ export default function ColignyMonth (year, month) {
   function generateRows () {
 
     var currentDay = 1;
-    var daysInMonth = getDaysInMonth(cyclesCompleted, month);
+    var daysInMonth = getDaysInMonth(year, month, true);
     var r = 0;
     var isToday;
     rows = [];

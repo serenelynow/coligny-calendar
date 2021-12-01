@@ -31,14 +31,14 @@ export default function GoBackOneMonth() {
 			year = year - 1;
 
 			// adjust yearInCycle
-			yearInCycle = ColignyCycle.getYearFromCycle(year);
+			yearInCycle = ColignyCycle.getMetonicYear(year);
 
 			// get the month index;
 			month = yearInCycle.length - 1;
 
 		} else {
 			year = currentYear;
-			yearInCycle = ColignyCycle.getYearFromCycle(year);
+			yearInCycle = ColignyCycle.getMetonicYear(year);
 		}
 
 		//find first month that has days
