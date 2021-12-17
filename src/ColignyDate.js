@@ -90,7 +90,7 @@ export default function ColignyDate (year, month, date, day) {
 	};
 	
 	if (month == undefined && date == undefined ) {
-		// this should be days since zero date
+		// in this case, year should actually be days since base date
 		var newDate = calculateDate(year);
 
 		this.setYear(newDate.year);
