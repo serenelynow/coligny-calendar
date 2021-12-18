@@ -22,7 +22,7 @@ export default function ColignyCalendarHeader(props) {
 							display: "inline-block",
 							verticalAlign: 'middle',
 							fontSize: {xs: ".95rem", sm:'1.15rem'},
-							width: {xs: '150px', sm: '212px'}
+							width: {xs: '160px', sm: '225px'}
 						}}
 					>
 						{label}
