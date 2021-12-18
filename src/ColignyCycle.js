@@ -257,6 +257,10 @@ function getDriftCycleIndex(cycle, yearInMetonic) {
         }
     }
 
+    if (i == cycle.length) {
+        i = 0;
+    }
+
     return i;
 };
 
