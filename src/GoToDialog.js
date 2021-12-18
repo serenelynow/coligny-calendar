@@ -42,7 +42,15 @@ export default function GoToDialog(props) {
   }
 
   const isValidForm = (form) => {
-    return !isInvalidYear(year);
+
+    const isValidYearInput = !isInvalidYear(year);
+
+    if (!isValidYearInput) {
+        document.forms.goToForm.year.focus();
+    }
+
+    var isValidForm = isValidYearInput;
+    return isValidForm;
   }
 
   const onSubmit = (event) => {
