@@ -150,45 +150,42 @@ export function calculateDaysSinceColBase (year, month, day) {
             // this is for counting backwards
             increment = -1;
             comparisonFn = greaterThan;
-            compareFnRtArg = yearDiff;
 
-            m = metonicCycle.length - 1;
-            mStart = m;
-            mEnd = -1;
+            yearDiff--;
 
         } else {
             // this is for counting forward
             increment = 1;
             comparisonFn = lessThan;
-            compareFnRtArg = yearDiff + 1;
-
-            m = 0;
-            mStart = m;
-            mEnd = metonicCycle.length;
-
         }
 
         // calculate completed metonic cycles and total days for those
         var completedMetonicCycles = Math.floor(yearDiff / metonicCycle.length);
         daysSinceColBase = completedMetonicCycles * daysInMetonicCycle;
 
-        // update counts
-        countingYears = completedMetonicCycles * metonicCycle.length;
+        var remainder = yearDiff % metonicCycle.length;
+
         if (isBeforeBase == true) {
+            // this is for counting backwards
+
             mStart = metonicCycle.length - 1;
+            mEnd = mStart - remainder;
+
         } else {
+            // this is for counting forward
+
             mStart = 0;
+            mEnd = remainder;
+
         }
 
-        // iterated completed years
-        while ((countingYears + 1) < compareFnRtArg) {
-            countingYears++;
-            daysSinceColBase += daysInMetonicYears[mStart];
-            mStart += increment;
+        for (m = mStart; comparisonFn(m, mEnd); m += increment) {
+            daysSinceColBase += daysInMetonicYears[m];
         }
+
 
         // iterated completed months
-        var yearCycle = metonicCycle[mStart];
+        var yearCycle = metonicCycle[m];
         if (isBeforeBase == true) {
             monthInitial = yearCycle.length - 1;
             monthFnRtArg = month;
