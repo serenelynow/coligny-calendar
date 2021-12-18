@@ -44,7 +44,7 @@ export function toLocaleDateString(cDate, gDate) {
                 dateStr += cDate.getDate();
                 break;
             case 'era':
-                dateStr += 'BG';
+                dateStr += (cDate.getYear() >= 0 ? 'AAC' : 'AS');
                 break;
             default:
                 dateStr += part.value;
@@ -81,10 +81,8 @@ export function isToday (type, year, month, date) {
     var isToday = false;
 
     if (type == "g") { // Gregorian
-        // var now = new Date();
         var compareDate;
         if (year instanceof Date) {
-            // compareDate = new Date(year);
             compareDate = year;
         } else {
             compareDate = new Date(year, month, date);

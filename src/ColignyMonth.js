@@ -17,7 +17,8 @@ export default function ColignyMonth (year, month) {
       if (numeric) { 
         cString = month + "/" + year;
       } else {
-        cString = this.getMonthName(month) + " " + year + " BG";
+        cString = this.getMonthName(month) + " " + year 
+        + (year >= 0 ? " AAC" : " AS");
       }
 
     return cString;
