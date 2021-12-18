@@ -8,6 +8,7 @@ export const fr = {
 	goto: "Aller à",
 	gototoday: "Aller à aujourd'hui",
 	month: "Mois",
+	noZero: "L'année 0 n'existe pas dans ce calendrier. Utilisez -1.",
 	today: "Aujourd'hui",
 	todayis: "Nous sommes le",
 	year: "Année"

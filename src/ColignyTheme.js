@@ -42,19 +42,28 @@ export default function ColignyTheme () {
 			    	}
 			    },
 			    MuiTableHead: {
-			      styleOverrides: {
-			        root: (
-			        	prefersDarkMode 
-		        			? {backgroundColor: grey[800]} 
-		        			: {backgroundColor: grey[300], 
-		        					borderColor: grey[700], 
-		        					borderWidth: 1, 
-		        					borderStyle: 'solid', 
-		        					borderRight: 'none', 
-		        					borderLeft: 'none'
-		        				}
-			        )
-			      }
+			      	styleOverrides: {
+				        root: (
+				        	prefersDarkMode 
+			        			? {backgroundColor: grey[800]} 
+			        			: {backgroundColor: grey[300], 
+			        					borderColor: grey[700], 
+			        					borderWidth: 1, 
+			        					borderStyle: 'solid', 
+			        					borderRight: 'none', 
+			        					borderLeft: 'none'
+			        				}
+				        )
+			      	}
+			    },
+			    MuiFormHelperText: {
+			    	styleOverrides: {
+			    		root: {
+			    			marginRight: 0,
+			    			marginLeft: 0,
+			    			maxWidth: 'fit-content'
+			    		}
+			    	}
 			    }
 			}
 	    });

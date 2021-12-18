@@ -13,9 +13,9 @@ export default function GoBackOneMonth() {
 	    var calendar = calContext.calendar;
 
 	    setCalContext(
-	      calContext => (
-	        { ...calContext, year: calendar.getYear(), month: calendar.getMonth(), isLoaded:true }
-	      )
+	    	calContext => (
+	        	{ ...calContext, year: calendar.getYear(), month: calendar.getMonth(), isLoaded:true }
+	     	)
 	    );
 	 }
 	
@@ -28,7 +28,7 @@ export default function GoBackOneMonth() {
 
 		if (month < 0) {
 			// going into new year now
-			year = year - 1;
+			year = ((year == 1) ? -1 : year - 1);
 
 			// adjust yearInCycle
 			yearInCycle = ColignyCycle.getMetonicYear(year);
@@ -58,9 +58,9 @@ export default function GoBackOneMonth() {
 
 	function goBack () {
 		setCalContext(
-	      calContext => (
-	        { ...calContext, isLoaded:false }
-	      )
+	    	calContext => (
+	        	{ ...calContext, isLoaded:false }
+	     	)
 	    );
 		var previousMonth = getPreviousMonth(calContext.year, calContext.month);
 		calContext.calendar.update(previousMonth.year, previousMonth.month, true, finishedLoading);

@@ -3,7 +3,7 @@ import ColignyDate from './ColignyDate.js';
 
 // dates according to http://www.coligny-app.com
 export const baseGregorianDate = new Date(2003, 4, 8);
-export const baseColignyDate = new ColignyDate (2584, 0, 1, baseGregorianDate.getDay());
+export const baseColignyDate = new ColignyDate (2585, 0, 1, baseGregorianDate.getDay());
 
 const startOfDayHour = -18;
 
@@ -88,6 +88,17 @@ function wereDaysAlreadyRemovedForLunarDrift(year) {
     return daysAlreadyRemoved;
 }
 
+function getYearDiffFromBase(year) {
+    if (year < 1) {
+        // coligny calendar does not have a 0 year in it's counting 
+        // so we have to account for that
+        year++;
+    }
+    var yearDiff = year - baseColignyDate.getYear();
+
+    return yearDiff;
+}
+
 function getDaysInMetonicCycle(startYear) {
     // right now this function is only used to calculate the current date
     // and as of now, it doesn't even span a whole metonic cycle from our base date
@@ -95,7 +106,8 @@ function getDaysInMetonicCycle(startYear) {
     // where a lunar or drift cycle will be crossed to calculate the current date, 
     // then those TODOs will need to be done.
     var metonicDays = daysInMetonicCycle;
-    var yearDiff = startYear - baseColignyDate.getYear();
+    // var yearDiff = startYear - baseColignyDate.getYear();
+    var yearDiff = getYearDiffFromBase(startYear);
     const isBeforeBase = yearDiff < 0;
     yearDiff = Math.abs(yearDiff);
 
@@ -145,7 +157,7 @@ export function calculateDaysSinceColBase (year, month, day) {
     // if this date equals baseColignDate, no need to do any further calculations
     if (!(baseColignyDate.equals(year, month, day))) {
 
-        var yearDiff = Math.abs(year - baseColignyDate.getYear());
+        var yearDiff = Math.abs(getYearDiffFromBase(year));
         var countingYears = 0;
 
         var increment, comparisonFn, compareFnRtArg;
@@ -224,8 +236,9 @@ export function calculateDaysSinceColBase (year, month, day) {
 }
 
 function getCycleIndex(year, cycleLength) {
-    var yearDiff = year - baseColignyDate.getYear();
+    var yearDiff = getYearDiffFromBase(year)
     var isBeforeBase = yearDiff < 0;
+
     var cycleIndex = Math.abs(yearDiff) % cycleLength;
 
     if (isBeforeBase == true && cycleIndex == 0) {
@@ -318,7 +331,7 @@ function isYearToAdjustForDrift(
     getYearsToNextAdjustFn,
     returnObject) {
 
-    const yearDiff = year - baseColignyDate.getYear();
+    const yearDiff = getYearDiffFromBase(year);
     const isBeforeBase = yearDiff < 0;
     const yearInDriftCycle = getYearInDriftCycleFn(year);
     const untilCycleEnd = (driftCycleLength - 1) - yearInDriftCycle;
@@ -376,7 +389,7 @@ function getDaysToRemoveforDriftCycle (
 
     var daysToRemove = 0;
 
-    const yearDiff = year - baseColignyDate.getYear();
+    const yearDiff = getYearDiffFromBase(year);
     const driftCycles = Math.floor(Math.abs(yearDiff) / driftCycleLength);
     daysToRemove += driftCycles * daysToRemoveMultiplier;
 

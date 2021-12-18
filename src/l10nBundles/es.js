@@ -18,6 +18,7 @@ export const es = {
 	goto: "Ir a",
 	gototoday: "Ir a hoy",
 	month: "Mes",
+	noZero: "El año 0 no existe en este calenario. Use -1.",
 	today: "Hoy",
 	todayis: "Hoy es",
 	year: "Año"

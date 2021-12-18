@@ -22,7 +22,7 @@ export default function GoForwardOneYear() {
 	function getNextYear(currentYear, currentMonth) {
         
         // go forward one year
-        var year = currentYear + 1; 
+        var year = currentYear == -1 ? 1 : currentYear + 1; 
         var month = currentMonth;
         var yearCycle = ColignyCycle.getMetonicYear(year);
         
@@ -33,7 +33,7 @@ export default function GoForwardOneYear() {
                 
                 // we have come to the end of the year
                 // so got to the next year and get the first month
-                year++;
+                year = ((year == -1) ? 1 : year + 1);
                 yearCycle = ColignyCycle.getMetonicYear(year);
                 month = 0;
             } else {

@@ -37,18 +37,32 @@ export default function GoToDialog(props) {
     onGoTo(calContext);
   };
 
-  const onSubmit = () => {
+  const isInvalidYear = (year) => {
+      return (year == undefined || year == '' || year == 0);
+  }
+
+  const isValidForm = (form) => {
+    return !isInvalidYear(year);
+  }
+
+  const onSubmit = (event) => {
+
+    if (isValidForm(event.target)) {
     
-    setCalContext(
-      calContext => (
-        { ...calContext, isLoaded:false }
-      )
-    );
+      setCalContext(
+        calContext => (
+          { ...calContext, isLoaded:false }
+        )
+      );
 
-    event.preventDefault();
+      event.preventDefault();
 
-    calContext.calendar.update(parseInt(year), parseInt(month),  true, finishedLoading);
-    onClose();
+      calContext.calendar.update(parseInt(year), parseInt(month),  true, finishedLoading);
+      onClose();
+    } else {
+      // there is an error in the form so stop the form submission
+      event.preventDefault();
+    }
   };
 
   const handleYearBlur = (event) => {
@@ -106,7 +120,8 @@ export default function GoToDialog(props) {
             }}
           >
             <TextField
-              error={year == undefined || year == ''}
+              error={isInvalidYear(year)}
+              helperText={year == 0 ? l10n.noZero : ''}
               required
               autoFocus
               name="year"

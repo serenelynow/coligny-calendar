@@ -22,7 +22,7 @@ export default function GoBackOneYear() {
 	function getPreviousYear (currentYear, currentMonth) {
         
         // go back one year
-        var year = currentYear - 1; 
+        var year = ((currentYear == 1) ? -1 : currentYear - 1); 
         var month = currentMonth;
         var yearCycle = ColignyCycle.getMetonicYear(year);
 
@@ -32,7 +32,7 @@ export default function GoBackOneYear() {
             if (month == (yearCycle.length - 1)) {
                 
                 // //we've reached the end of the year so go to the next year
-                year++;
+                year = ((year == -1) ? 1 : year + 1);
                 yearCycle = ColignyCycle.getMetonicYear(year);
                 month = 0;
             } else {
@@ -53,7 +53,6 @@ export default function GoBackOneYear() {
         var yearPrevious = getPreviousYear(calContext.year, calContext.month);
         calContext.calendar.update(yearPrevious.year, yearPrevious.month, true, finishedLoading);
     }
-
 
 	return (<IconButton aria-label={l10n.goBackOneYear} size='small' onClick={goBack} sx={{paddingLeft: 1, paddingRight: 1, displayPrint: 'none'}}>{"<<"}</IconButton>);
 };

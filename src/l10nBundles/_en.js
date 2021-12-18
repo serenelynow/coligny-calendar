@@ -12,6 +12,7 @@ export const en = {
 	goto: "Go to",
 	gototoday: "Go to today",
 	month: "Month",
+	noZero: "The 0 year does not exist in this calendar. Use -1.",
 	today: "Today",
 	todayis: "Today is",
 	year: "Year"

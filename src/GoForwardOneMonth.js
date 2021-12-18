@@ -28,7 +28,7 @@ export default function GoForwardOneMonth() {
 		if (month >= yearCycle.length) {
 			
 			// going into new year now
-			year = currentYear + 1;
+			year = ((currentYear == -1) ? 1 : currentYear + 1);
 
 			// adjust yearInCycle
 			yearCycle = ColignyCycle.getMetonicYear(year);
