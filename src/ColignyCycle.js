@@ -2,8 +2,9 @@ import {gToday, milliFactor} from './DateHelper.js';
 import ColignyDate from './ColignyDate.js';
 
 // dates according to http://www.coligny-app.com
-export const baseGregorianDate = new Date(2003,4,8);
-export const baseColignyDate = new ColignyDate (5003, 0, 1, baseGregorianDate.getDay());
+export const baseGregorianDate = new Date(2003, 4, 8);
+export const baseColignyDate = new ColignyDate (2584, 0, 1, baseGregorianDate.getDay());
+
 const startOfDayHour = -18;
 
 const colignyMonths = [ 
@@ -71,6 +72,22 @@ function calculateDaysInFullMetonicCycle () {
 }
 const daysInMetonicCycle = calculateDaysInFullMetonicCycle();
 
+function wereDaysAlreadyRemovedForSolarDrift(year) {
+    const yearInfo = isYearToRemoveIntercalary2(year, true);
+
+    const daysAlreadyRemoved = yearInfo.isYearToAdjust || (yearInfo.untilCycleEnd < yearInfo.yearsToNextCycleAdjust);
+    
+    return daysAlreadyRemoved;
+}
+
+function wereDaysAlreadyRemovedForLunarDrift(year) {
+    const yearInfo = isYearToShortenEquos(year, true);
+
+    const daysAlreadyRemoved = yearInfo.isYearToAdjust || (yearInfo.untilCycleEnd < yearInfo.yearsToNextCycleAdjust);
+    
+    return daysAlreadyRemoved;
+}
+
 function getDaysInMetonicCycle(startYear) {
     // right now this function is only used to calculate the current date
     // and as of now, it doesn't even span a whole metonic cycle from our base date
@@ -81,16 +98,6 @@ function getDaysInMetonicCycle(startYear) {
     var yearDiff = startYear - baseColignyDate.getYear();
     const isBeforeBase = yearDiff < 0;
     yearDiff = Math.abs(yearDiff);
-    var increment, compareFn;
-
-    if (isBeforeBase == true) {
-        increment = -1
-        compareFn = greaterThan;
-
-    } else {
-        increment = 1;
-        compareFn = lessThan;
-    }
 
     // we want to see if we crossed over into 
     // a new solar or lunar drift cycle
@@ -101,9 +108,8 @@ function getDaysInMetonicCycle(startYear) {
     lunarEndYear = yearDiff + metonicCycle.length;
     lunarCycleAtEnd = Math.floor(lunarEndYear / lunarDriftCycleLength);
 
-    if (lunarCyclesAtStart != lunarCycleAtEnd) {
-    // TODO: don't take these days out if they were taken out at the end of the last metonic cycle because the intercalary month was in the last drift cycle
-        metonicDays -= increment;
+    if ((lunarCyclesAtStart != lunarCycleAtEnd) && (wereDaysAlreadyRemovedForLunarDrift(startYear - 1) == false)) {
+        metonicDays--;
     }
 
     var solarCyclesAtStart, solarCycleAtEnd, solarEndYear;
@@ -111,19 +117,20 @@ function getDaysInMetonicCycle(startYear) {
     solarEndYear = yearDiff + metonicCycle.length;
     solarCycleAtEnd = Math.floor(solarEndYear / solarDriftCycleLength);
 
-    if (solarCyclesAtStart != solarCycleAtEnd) { 
-    // TODO: don't take these days out if they were taken out at the end of the last metonic cycle because the intercalary month was in the last drift cycle
+    if ((solarCyclesAtStart != solarCycleAtEnd) && (wereDaysAlreadyRemovedForSolarDrift(startYear - 1) == false)) { 
         metonicDays -= metonicCycle[interclary[0]][intercalary2];
     }   
 
     // we may not have completed a new solar or lunar drift cycle in the last metonic cycle
     // but we maybe close enough to the end that it's the year 
     // when a day or month should be removed so we need to check for that now
-    // var yearsFromSolarEnd = solarDriftCycleLength - (solarEndYear % solarCycleAtEnd);
-    // if (yearsFromSolarEnd <= 2) { // 2 is the number of years between the last and first 2nd intercalary month
-    //     // metonicDays += 30 * (increment * -1);
-    //     metonicDays -= 30;
-    // }
+    if (wereDaysAlreadyRemovedForLunarDrift(startYear + metonicCycle.length - 1) == true) {
+        metonicDays--;
+    }
+
+    if (wereDaysAlreadyRemovedForSolarDrift(startYear + metonicCycle.length - 1) == true) {
+        metonicDays -= metonicCycle[interclary[0]][intercalary2];
+    }
 
     return metonicDays;
 }
@@ -249,7 +256,7 @@ function getYearInSolarDriftCycle(year) {
     return yearInSolarDriftCycle;
 };
 
-function getDriftCycleIndex(cycle, yearInMetonic) {
+function getDriftCycleMetonicIndex(cycle, yearInMetonic) {
     var i;
     for (i = 0; i < cycle.length; i++) {
         if (cycle[i] >= yearInMetonic) {
@@ -265,12 +272,12 @@ function getDriftCycleIndex(cycle, yearInMetonic) {
 };
 
 function getThirtyDayEquosIndex(yMetonic){
-    var i = getDriftCycleIndex(thirtyDayEquos, yMetonic);
+    var i = getDriftCycleMetonicIndex(thirtyDayEquos, yMetonic);
     return i;
 };
 
 function getIntercalary2Index(yMetonic) {
-    var i = getDriftCycleIndex(intercalary2Years, yMetonic);
+    var i = getDriftCycleMetonicIndex(intercalary2Years, yMetonic);
     return i;
 };
 
