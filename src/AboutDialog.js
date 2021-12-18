@@ -16,13 +16,17 @@ export default function AboutDialog(props) {
       anchorEl={anchorEl}
       anchorOrigin={{
         vertical: 'bottom',
-        horizontal: 'left',
+        horizontal: 'center',
+      }}
+      transformOrigin={{
+        vertical: 'top',
+        horizontal: 'center',
       }}
       open={open}
       onClose={onClose} 
-      sx={{width: '95%', maxWidth: '600px'}}
+      sx={{marginLeft: 2, marginRight: 2}}
     >
-      <Box sx={{padding: 2}}>
+      <Box sx={{padding: 2, maxWidth: '600px'}}>
         <Typography variant="h6" sx={{marginBottom: 2}}>{l10n.about}</Typography>
         <Box>
           <Typography variant="body1">
