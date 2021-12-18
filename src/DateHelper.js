@@ -23,6 +23,10 @@ var dateConfig = {year: 'numeric', month:'short', day:'2-digit', era:'short'};
 var formatter = new Intl.DateTimeFormat([], dateConfig);
 var formatterEn = new Intl.DateTimeFormat(['en'], dateConfig);
 
+export function getColignyEra(year) {
+    return year >= 0 ? 'AAC' : 'AS';
+}
+
 export function toLocaleDateString(cDate, gDate) {
     var fConfig = {year: 'numeric', month:'long', day:'2-digit', era:'short'};
     var dateFormater = new Intl.DateTimeFormat([], dateConfig);
@@ -38,13 +42,13 @@ export function toLocaleDateString(cDate, gDate) {
                 dateStr += cDate.getMonthName();
                 break;
             case 'year':
-                dateStr += cDate.getYear();
+                dateStr += Math.abs(cDate.getYear());
                 break;
             case 'day':
                 dateStr += cDate.getDate();
                 break;
             case 'era':
-                dateStr += (cDate.getYear() >= 0 ? 'AAC' : 'AS');
+                dateStr += getColignyEra(cDate.getYear());
                 break;
             default:
                 dateStr += part.value;
