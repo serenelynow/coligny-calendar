@@ -2,8 +2,15 @@ import {gToday, milliFactor} from './DateHelper.js';
 import ColignyDate from './ColignyDate.js';
 
 // dates according to http://www.coligny-app.com
-export const baseGregorianDate = new Date(2003, 4, 8);
-export const baseColignyDate = new ColignyDate (2585, 0, 1, baseGregorianDate.getDay());
+// leaving these here for troubleshooting later
+// export const baseGregorianDate = new Date(2003, 4, 8);
+// export const baseColignyDate = new ColignyDate (2585, 0, 1, baseGregorianDate.getDay()); // allows 582 BCE as year 1 AAC
+// export const baseColignyDate = new ColignyDate (5003, 0, 1, baseGregorianDate.getDay());
+
+// dates according to this apps calculations
+export const baseGregorianDate = new Date(-581, 3, 27); // -581 is actually 582 BCE
+export const baseColignyDate = new ColignyDate (1, 0, 1, baseGregorianDate.getDay()); // this set the base year to 1
+// export const baseColignyDate = new ColignyDate (2419, 0, 1, baseGregorianDate.getDay()); // this allows for alignment of years 2003 and 5003
 
 const startOfDayHour = -18;
 
@@ -106,7 +113,6 @@ function getDaysInMetonicCycle(startYear) {
     // where a lunar or drift cycle will be crossed to calculate the current date, 
     // then those TODOs will need to be done.
     var metonicDays = daysInMetonicCycle;
-    // var yearDiff = startYear - baseColignyDate.getYear();
     var yearDiff = getYearDiffFromBase(startYear);
     const isBeforeBase = yearDiff < 0;
     yearDiff = Math.abs(yearDiff);
@@ -133,16 +139,20 @@ function getDaysInMetonicCycle(startYear) {
         metonicDays -= metonicCycle[interclary[0]][intercalary2];
     }   
 
+    /* I'm not sure why but this code seems to not be needed but I wante to leave it here 
+       in case later we figure out why and that it is needed 
+    */
+
     // we may not have completed a new solar or lunar drift cycle in the last metonic cycle
     // but we maybe close enough to the end that it's the year 
     // when a day or month should be removed so we need to check for that now
-    if (wereDaysAlreadyRemovedForLunarDrift(startYear + metonicCycle.length - 1) == true) {
-        metonicDays--;
-    }
+    // if (wereDaysAlreadyRemovedForLunarDrift(startYear + metonicCycle.length - 1) == true) {
+    //     metonicDays--;
+    // }
 
-    if (wereDaysAlreadyRemovedForSolarDrift(startYear + metonicCycle.length - 1) == true) {
-        metonicDays -= metonicCycle[interclary[0]][intercalary2];
-    }
+    // if (wereDaysAlreadyRemovedForSolarDrift(startYear + metonicCycle.length - 1) == true) {
+    //     metonicDays -= metonicCycle[interclary[0]][intercalary2];
+    // }
 
     return metonicDays;
 }
@@ -532,8 +542,18 @@ export function calculateDate(daysFromBase) {
     newGDate.setDate(newGDate.getDate() + daysFromBase);
     var dayOfWeek = newGDate.getDay();
 
+    var newYear = baseColignyDate.getYear() + (increment * years);
+
+    // this is to accommodate when the base year and the current year
+    // cross the BCE and CE line so this likey will never be true
+    // if the base year is in the CE era
+    if ((baseColignyDate.getYear() >= 1) && (newYear < 1) 
+        ||(baseColignyDate.getYear() < 1 && newYear >= 1)) {
+        newYear++;
+    }
+
     var newDate = {
-        year: baseColignyDate.getYear() + (increment * years),
+        year: newYear,
         month: baseColignyDate.getMonth() + (increment * m),
         date: baseColignyDate.getDate() + (increment * d),
         day: dayOfWeek,
