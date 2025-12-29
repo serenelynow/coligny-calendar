@@ -9,13 +9,14 @@ import ColignyDate from './ColignyDate.js';
 
 // dates according to this apps calculations
 export const baseGregorianDate = new Date(-581, 3, 27); // -581 is actually 582 BCE
+
 export const baseColignyDate = new ColignyDate (1, 0, 1, baseGregorianDate.getDay()); // this set the base year to 1
 // export const baseColignyDate = new ColignyDate (2419, 0, 1, baseGregorianDate.getDay()); // this allows for alignment of years 2003 and 5003
 
 const startOfDayHour = -18;
 
 const colignyMonths = [ 
-    "Quimonios", "Samonios", "Dumanios", "Riuros", "Anagantios", "Orgronios", "Cutios", "Rantaranos", "Giamonios", "Simiuisonna", "Equos", "Elembi", "Aedrinni", "Cantlos"
+    "Quimonios", "Samonios", "Dumanios", "Riuros", "Anagantios", "Ogronios", "Cutios", "Rantaranos", "Giamonios", "Simiuisonna", "Equos", "Elembi", "Aedrinni", "Cantlos"
 ]; // 14 months
 
 const equos = 10;
@@ -501,7 +502,7 @@ export function calculateDate(daysFromBase) {
     }
 
     // add days from completed metonic cycles and count years
-    var actualStartYear = baseColignyYear+ (years * increment);
+    var actualStartYear = baseColignyYear + (years * increment);
     var metonicDays = getDaysInMetonicCycle(actualStartYear);
     while (comparisonFn((countingTo + (increment * metonicDays)), compareFnRightArg)) {
         // we got metonic cycles to go through
