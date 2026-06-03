@@ -15,7 +15,7 @@ export const baseColignyDate = new ColignyDate (1, 0, 1, baseGregorianDate.getDa
 const startOfDayHour = -18;
 
 const colignyMonths = [ 
-    "Quimonios", "Samonios", "Dumanios", "Riuros", "Anagantios", "Orgronios", "Cutios", "Rantaranos", "Giamonios", "Simiuisonna", "Equos", "Elembi", "Aedrinni", "Cantlos"
+    "Quimonios", "Samonios", "Dumanios", "Riuros", "Anagantios", "Ogronios", "Cutios", "Rantaranos", "Giamonios", "Simiuisonna", "Equos", "Elembi", "Aedrinni", "Cantlos"
 ]; // 14 months
 
 const equos = 10;
