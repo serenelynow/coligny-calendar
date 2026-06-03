@@ -15,7 +15,7 @@ export const baseColignyDate = new ColignyDate (1, 0, 1, baseGregorianDate.getDa
 const startOfDayHour = -18;
 
 const colignyMonths = [ 
-    "Quimonios", "Samonios", "Dumanios", "Riuros", "Anagantios", "Orgronios", "Cutios", "Rantaranos", "Giamonios", "Simiuisonna", "Equos", "Elembi", "Aedrinni", "Cantlos"
+    "Quimonios", "Samonios", "Dumanios", "Riuros", "Anagantios", "Ogronios", "Cutios", "Rantaranos", "Giamonios", "Simiuisonna", "Equos", "Elembi", "Aedrinni", "Cantlos"
 ]; // 14 months
 
 const equos = 10;
@@ -501,15 +501,19 @@ export function calculateDate(daysFromBase) {
     }
 
     // add days from completed metonic cycles and count years
-    var actualStartYear = baseColignyYear+ (years * increment);
+    var actualStartYear = calculateYear(years, increment);
     var metonicDays = getDaysInMetonicCycle(actualStartYear);
     while (comparisonFn((countingTo + (increment * metonicDays)), compareFnRightArg)) {
         // we got metonic cycles to go through
         countingTo += (increment * metonicDays);
+        // might be able to get rid of years or actualStartYear
         years += metonicCycle.length;
-        actualStartYear = baseColignyYear + (years * increment);
+        actualStartYear = calculateYear(years, increment);
 
-        // after the first iteration, all cycles will be full cycles
+        // after the first iteration which possibly calculates a partial year
+        // because it's not likely we are started on day of of a year, 
+        // all cycles will be full cycles becuase the loop will break 
+        // if a partial cycle is detected
         metonicDays = getDaysInMetonicCycle(actualStartYear);
     } 
 
@@ -520,9 +524,9 @@ export function calculateDate(daysFromBase) {
     // versus each year and month that is traversed
 
     // add days from completed years in incomplete metonic cycle and count years
-    while (comparisonFn((countingTo + (increment * getDaysInYear(baseColignyYear + (years * increment)))), compareFnRightArg)) {
+    while (comparisonFn((countingTo + (increment * getDaysInYear(calculateYear(years, increment)))), compareFnRightArg)) {
         // we are in the last metonic cycle and need to identify specific year
-        countingTo += (increment * getDaysInYear(baseColignyYear + (years * increment)));
+        countingTo += (increment * getDaysInYear(calculateYear(years, increment)));
         years++;
     } 
 
@@ -542,25 +546,70 @@ export function calculateDate(daysFromBase) {
     newGDate.setDate(newGDate.getDate() + daysFromBase);
     var dayOfWeek = newGDate.getDay();
 
-    var newYear = baseColignyDate.getYear() + (increment * years);
+    var newYear = calculateYear(years, increment);
 
-    // this is to accommodate when the base year and the current year
-    // cross the BCE and CE line so this likey will never be true
-    // if the base year is in the CE era
-    if ((baseColignyDate.getYear() >= 1) && (newYear < 1) 
-        ||(baseColignyDate.getYear() < 1 && newYear >= 1)) {
-        newYear++;
+    // adjust for when days left in month carry over into next month and thus possibly next year
+    // first, get what has been calculated so far
+    var thisMonth = baseColignyDate.getMonth() + (increment * m);
+    var thisDate = baseColignyDate.getDate() + (increment * d);
+    var daysInThisMonth = getDaysInMonth(newYear, m);
+
+    if (thisDate > daysInThisMonth) {
+        // we crossed into a new month so increment the month 
+        // and recalculate the date
+        thisMonth++;
+        thisDate = thisDate - daysInThisMonth; // might need to use increment
+
+        // now we need to see if we incremented into a new year with the new month
+        var monthsInThisYear = getMonthsInYear(newYear).length;
+        if (thisMonth >= monthsInThisYear) {
+            // we crossed into the new year so add to year 
+            // and set to the first month of they new year
+            years++;  
+
+            // this might have caused the new year to cross the 0 year mark 
+            // but that might have already happened 
+            // so using the function with the total years from base
+            // is the safest way to calculate that
+            // so we are going to get the new year again using the function
+            newYear = calculateYear(years, increment);
+
+            // now set the month to the first month of they new year
+            thisMonth = getFirstMonthInYear(newYear);
+        }
     }
 
     var newDate = {
         year: newYear,
-        month: baseColignyDate.getMonth() + (increment * m),
-        date: baseColignyDate.getDate() + (increment * d),
+        month: thisMonth,
+        date: thisDate,
         day: dayOfWeek,
         gDate: newGDate
     };
 
     return newDate;
+}
+
+function calculateYear(yearsFromBase, increment) {
+    // yearsFromBase is the number of years to calcuate from the base
+    // increment should be 1 or -1 to indicate if 
+    // this is adding (1) or subtracting (-1) yearsFromBase
+
+    // get Base Coligny Year to calculate from
+    var baseColignyYear = baseColignyDate.getYear();
+
+    // from that base year, calculate new year based on parameters.
+    var newYear = baseColignyYear + (yearsFromBase * increment);
+
+    // if the new year crossed over the 0 year
+    // adjust for the fact that there is no 0 year 
+    // by adding one to this new year
+    if ((baseColignyYear >= 1) && (newYear < 1) 
+        ||(baseColignyYear < 1 && newYear >= 1)) {
+        newYear++;
+    }
+
+    return newYear;
 }
 
 function getDaysInYear(year) {
@@ -638,6 +687,24 @@ export function getMonthsInYear(year) {
     }
 
     return months;
+}
+
+export function getFirstMonthInYear(year) {
+    // get the index for the first month of the year
+    // since some years skip the first month
+
+    var thatYear = getObject(year, null, true);
+
+    for (var i = 0; i < thatYear.length; i++) {
+        if (thatYear[i] != undefined && thatYear[i] != 0) {
+            // this should be the first month in the year
+            // so break to stop the loop
+            break;
+        }
+    }
+
+    // first month was identified so returning the index
+    return i;
 }
 
 export function getDaysInMonth(year, month, shortenEquos) {
