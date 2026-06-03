@@ -8,7 +8,8 @@ import ColignyDate from './ColignyDate.js';
 // export const baseColignyDate = new ColignyDate (5003, 0, 1, baseGregorianDate.getDay());
 
 // dates according to this apps calculations
-export const baseGregorianDate = new Date(-581, 3, 27); // -581 is actually 582 BCE
+// export const baseGregorianDate = new Date(-581, 3, 27); // -581 is actually 582 BCE
+export const baseGregorianDate = new Date(2015, 3, 26); // based on Helen's McKays work
 export const baseColignyDate = new ColignyDate (1, 0, 1, baseGregorianDate.getDay()); // this set the base year to 1
 // export const baseColignyDate = new ColignyDate (2419, 0, 1, baseGregorianDate.getDay()); // this allows for alignment of years 2003 and 5003
 
